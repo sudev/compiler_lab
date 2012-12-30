@@ -1,0 +1,11 @@
+The lexical Analyser generator Lex 
+
+Structure of Lex Program 
+
+declarations //declaration of variables, manifest constants 
+%%
+translation functions 
+%%
+auxillary functions 
+
+
