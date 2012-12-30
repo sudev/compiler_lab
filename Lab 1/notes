@@ -4,8 +4,13 @@ Structure of Lex Program
 
 declarations //declaration of variables, manifest constants 
 %%
-translation functions 
+translation functions //format : Pattern { action } , pattern can be regular expressions, action typically written in c language 
 %%
-auxillary functions 
+auxillary functions //addtitional info, contains sub routine functions 
 
+
+---------------
+
+
+The Lexical analyser returns the token name to the parser (of lexemes ) but uses the shared integeral variable yyval to pas additional information about lexeme found
 
