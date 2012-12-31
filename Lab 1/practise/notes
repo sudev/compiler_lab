@@ -1,0 +1,34 @@
+The lexical Analyser generator Lex 
+
+Structure of Lex Program 
+
+declarations //declaration of variables, manifest constants 
+%%
+translation functions //format : Pattern { action } , pattern can be regular expressions, action typically written in c language 
+%%
+auxillary functions //addtitional info, contains sub routine functions 
+
+
+---------------
+
+
+The Lexical analyser returns the token name to the parser (of lexemes ) but uses the shared integeral variable yyval to pas additional information about lexeme found
+
+Regular Expressions 
+--------------
+// regular expressions inside the [] only \ - ^ works.
+// to match both signs of the numeric [ -+0-9]
+// to match all characters other than some characters use the ^ character
+// all [possible printable chara[cters in ASCII [\40-\176]
+// optional characters to match ac or abc use [ab?c]
+// repeated expressions -  use * or + to implement it 
+// ab or cd [ab | cd ]
+
+Lex Actions 
+-------------------
+// to issue a null action use the c language's [\t\n]
+// to knoe the output of a lex rule use regex-rule {printf("%s",yytext)} or use regex-rule ECHO 
+// to count onumber of words, characters using lex we can use regex-rule {printf(words++;chars +=yyleng;}
+// read more about yymore and yyless 
+// input() output() unput()
+
