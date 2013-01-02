@@ -8,10 +8,7 @@ translation functions //format : Pattern { action } , pattern can be regular exp
 %%
 auxillary functions //addtitional info, contains sub routine functions 
 
-
 ---------------
-
-
 The Lexical analyser returns the token name to the parser (of lexemes ) but uses the shared integeral variable yyval to pas additional information about lexeme found
 
 Regular Expressions 

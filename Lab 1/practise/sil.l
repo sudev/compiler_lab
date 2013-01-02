@@ -8,13 +8,14 @@ lt	>
 gt	<
 le	>=
 ge	<=
-ne 	<>
+ne 	!=
 delim	;
 plus	+
 minus	-
 mul	*
 div	/
 eqeq	==
+modulo	%
 
 %%
 {digit}	{printf("digit %s\n",yytext);}
@@ -29,10 +30,11 @@ eqeq	==
 {le}	{printf("operator %s\n",yytext);}
 {ge}	{printf("operator %s\n",yytext);}
 {ne}	{printf("operator %s\n",yytext);}
-{div}	{printf("operator %s\n",yytext);}
-{mul}	{printf("operator %s\n",yytext);}
+
+
 {minus}	{printf("operator %s\n",yytext);}
-{plus}	{printf("operator %s\n",yytext);}
+
 {eqeq}	{printf("operator %s\n",yytext);}
+{modulo}	{printf("operator %s\n",yytext);}
 
 %%
