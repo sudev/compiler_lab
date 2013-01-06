@@ -25,6 +25,8 @@ bl	\[
 ampersand	&
 comma	,
 space	" "
+tab	[ \t]
+tabs	[ \t]+
 junk	.
 comment	\/\/[^\n]*
 %%
@@ -54,6 +56,8 @@ comment	\/\/[^\n]*
 {div}	{printf("divide %s\n",yytext);}
 {mul}	{printf("multiply %s\n",yytext);}
 {space}	{printf("space %s\n",yytext);}
+{tab}	{printf("Tab %s\n",yytext);}
+{tabs}	{printf("Tab's %s\n",yytext);}
 {comma}	{printf("Comma %s\n",yytext);}
 {junk}	{printf("Dont know about  this guy %s\n",yytext);}
 {comment}	{printf("comment %s",yytext);}
