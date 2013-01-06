@@ -10,7 +10,7 @@ le	>=
 ge	<=
 ne 	!=
 delim	;
-plus	+
+plus	\+
 minus	-
 mul	*
 div	/
@@ -30,7 +30,7 @@ modulo	%
 {le}	{printf("less than equal %s\n",yytext);}
 {ge}	{printf("greater than equal %s\n",yytext);}
 {ne}	{printf("not equal  %s\n",yytext);}
-
+{plus}	{printf("plus %s\n",yytext);}
 
 {minus}	{printf("minus %s\n",yytext);}
 
