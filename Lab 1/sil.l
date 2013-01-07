@@ -2,7 +2,8 @@ digit	[0-9]
 digits	{digit}{digit}+
 alphabet	[a-zA-Z]
 id {alphabet}{alphabet}*
-key decl|end|if|else|then|while|enddecl|integer|boolean|begin|endif|endwhile|return|write
+key do|decl|end|if|else|then|while|enddecl|integer|boolean|begin|endif|endwhile|return|write
+
 eq	=
 lt	\>
 gt	\<
@@ -36,7 +37,7 @@ not	"NOT"
 %%
 {digit}	{printf("digit %s\n",yytext);}
 {digits} {printf("digits %s\n",yytext);}
-{alphabet} {printf("Alphabet %s\n",yytext);}
+
 {key}	{printf("keyword %s\n",yytext);}
 {and}	{printf("Logical %s\n",yytext);}
 {or}	{printf("Logical %s\n",yytext);}
