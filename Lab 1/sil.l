@@ -1,9 +1,9 @@
-digit	[0-9]
-digits	{digit}{digit}+
+digits  [0-9][0-9]*
 alphabet	[a-zA-Z]
-id {alphabet}{alphabet}*
-key do|decl|end|if|else|then|while|enddecl|integer|boolean|begin|endif|endwhile|return|write
-
+decimal	[\+|\-]?{digits}+\.{digits}+
+float	{decimal}("E"[+|-]{digits})? 
+id {alphabet}({digits}|{alphabet})*
+key record|float|return|do|decl|end|if|boolean|else|then|while|enddecl|integer|boolean|begin|endif|endwhile|return|write
 eq	=
 lt	\>
 gt	\<
@@ -35,9 +35,8 @@ or	"OR"
 not	"NOT"
 
 %%
-{digit}	{printf("digit %s\n",yytext);}
 {digits} {printf("digits %s\n",yytext);}
-
+{float}	{printf("float	%s\n",yytext);}
 {key}	{printf("keyword %s\n",yytext);}
 {and}	{printf("Logical %s\n",yytext);}
 {or}	{printf("Logical %s\n",yytext);}
@@ -67,7 +66,6 @@ not	"NOT"
 {tab}	{printf("Tab %s\n",yytext);}
 {tabs}	{printf("Tab's %s\n",yytext);}
 {comma}	{printf("Comma %s\n",yytext);}
-{junk}	{printf("Dont know about  this guy %s\n",yytext);}
+{junk}	{printf("Undefined %s\n",yytext);}
 {comment}	{printf("comment %s",yytext);}
-
 %%
