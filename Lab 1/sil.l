@@ -29,11 +29,18 @@ tab	[ \t]
 tabs	[ \t]+
 junk	.
 comment	\/\/[^\n]*
+and	"AND"
+or	"OR"
+not	"NOT"
+
 %%
 {digit}	{printf("digit %s\n",yytext);}
 {digits} {printf("digits %s\n",yytext);}
 {alphabet} {printf("Alphabet %s\n",yytext);}
 {key}	{printf("keyword %s\n",yytext);}
+{and}	{printf("Logical %s\n",yytext);}
+{or}	{printf("Logical %s\n",yytext);}
+{not}	{printf("Logical %s\n",yytext);}
 {id}	{printf("id, %s\n",yytext);}
 {delim}	{printf("deliminator %s\n",yytext);}
 {eq}	{printf("Equal %s\n",yytext);}
