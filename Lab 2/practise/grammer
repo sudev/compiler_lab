@@ -6,6 +6,15 @@ Aim
 
 Writting grammer for SIL language http://athena.nitc.ac.in/~kmurali/Compiler/sil.html
 
+Function and array is not required for week 2 
+
 #Grammer
+
+ delcalaration section
+ 
+
+start           ->  (global)(main)
+global          ->  "decl"(decl-state)"enddecl"             #global declaration part
+main            ->                                          #main function definition
 
 
