@@ -1,0 +1,11 @@
+#Grammer for parser 
+Aim 
+    Unambigous 
+    No left recursion (even though parser allows it)
+    No left factoring 
+
+Writting grammer for SIL language http://athena.nitc.ac.in/~kmurali/Compiler/sil.html
+
+#Grammer
+
+
