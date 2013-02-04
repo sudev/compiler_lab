@@ -6,7 +6,9 @@
     %}
 
 int [0-9]+
+id  
 %%
+
 
 decl  {return DECL;}
 enddecl {return ENDDECL;}
@@ -17,6 +19,9 @@ boolean {return BOOLEANE;}
 "["  {return *yytext;}
 "]"  {return *yytext;}
 int {return INTEGER;}
+"int main(){"   {return INTMAIN;}
+"{" {return *yytext;}
+"}" {return *yytext;}
 
 %%
 

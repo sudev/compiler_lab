@@ -4,7 +4,7 @@ int yylex(void);
 void yyerror(char *);
 %}
 
-%token DECL ENDDECL INTEGERE BOOLEANE
+%token DECL ENDDECL INTEGERE BOOLEANE INTMAIN
 
 %%
 
@@ -28,4 +28,17 @@ idsr:   ',' ids
     |';'
     ;
 
+main:   INTMAIN maindecl body '}'
+    ;
+maindecl:   DECL mainstate ENDDECL
+        ;
+mainstate:  INTEGERE mids mdecl
+         |  BOOLEANE mids mdecl
+         |
+         ;
+mids:   id midsr
+    ;
+midsr:  "," mids
+     |  ";"
+     ;
 
