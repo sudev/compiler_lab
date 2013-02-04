@@ -14,7 +14,11 @@ Function and array is not required for week 2
  
 
 start           ->  (global)(main)
-global          ->  "decl"(decl-state)"enddecl"             #global declaration part
+global          ->  "decl" (decl-state) "enddecl"                                                                                           #global declaration part
+decl-state      ->  (declint)(decl-state) | (declbool)(decl-state) | (declintarray)(decl-state) | (declboolarray)(decl-state) | "NULL"        #global declation types
+declint         ->  "integer"
+
+
 main            ->                                          #main function definition
 
 
