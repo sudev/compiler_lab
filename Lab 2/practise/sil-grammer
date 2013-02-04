@@ -1,0 +1,46 @@
+#Grammer for parser 
+    Unambigous 
+    No left recursion (even though parser allows it)
+    No left factoring 
+
+Writting grammer for SIL language http://athena.nitc.ac.in/~kmurali/Compiler/sil.html
+
+Function and array is not required for week 2 
+
+#Grammer
+
+ delcalaration section
+ 
+
+start           ->  (global)(main)
+
+#global declaration part 
+global          ->  "decl" (decl-state) "enddecl" | NULL                    #global declaration part
+decl-state      ->  (decl)(decl-state) | "NULL"                     #global declation types
+decl            ->  "integer"(ids)(decl) | "boolean"(ids)(decl) | "NULL"
+ids             ->  (id)(idsr) | (id)"["(int)"]"(idsr)                   #integer and variable arrays 
+idsr            ->  ","(ids) | ";"                                  #ending with a ";" and recursive definition 
+
+#body 
+
+main            ->  "int main()""{"(main-decl)(body)"}"
+
+#main declaration part 
+main-decl       ->  "decl"(main-state)"end decl"
+main-state      ->  (mdecl)(mdecl-state) | "NULL"
+mdecl           ->  "integer"(mids)(mdecl) | "boolean"(mids)(mdecl) | "NULL"
+mids            ->  (id)(midsr) 
+midsr           ->  ","(mids) | ";"
+
+
+#body 
+
+body            ->  "begin"(statements)(ret)"end"
+statements      ->  (assign)(statements) | (cond)(statements) | (itr)(statements) | (ipop)(statements)
+assign          ->  (id)"="(integer)";" | (id)"["(integer)"]""="(integer)";"
+cond            ->  "if" (logical-expr) "then" (statements) (optional)
+optional        ->  "else" (statements) "endif"";" | "endif"";"
+itr             ->  "while" (logical-expr) "do" (statements) "endwhile"";"
+ipop            ->  "read("(id)")"";" | "read("(id)"["(integer)"]"";" | "write("(arithmetic-expr)")"";"
+ret             ->  "return"(expression)";"
+arithmetic-expr ->  
