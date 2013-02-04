@@ -43,4 +43,4 @@ optional        ->  "else" (statements) "endif"";" | "endif"";"
 itr             ->  "while" (logical-expr) "do" (statements) "endwhile"";"
 ipop            ->  "read("(id)")"";" | "read("(id)"["(integer)"]"";" | "write("(arithmetic-expr)")"";"
 ret             ->  "return"(expression)";"
-arithmetic-expr ->  
+arithmetic-expr ->    
