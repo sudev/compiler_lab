@@ -1,0 +1,1211 @@
+State 86 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: start $end
+
+    1 start: global main
+
+    2 global: DECL declstate ENDDECL
+
+    3 declstate: INTEGERE ids declstate
+    4          | BOOLEANE ids declstate
+    5          | /* empty */
+
+    6 ids: ID idsr
+    7    | ID '[' INTEGER ']' idsr
+
+    8 idsr: ',' ids
+    9     | ';'
+
+   10 main: INTMAIN maindecl body '}'
+
+   11 maindecl: DECL mainstate ENDDECL
+
+   12 mainstate: INTEGERE mids mainstate
+   13          | BOOLEANE mids mainstate
+   14          | /* empty */
+
+   15 mids: ID midsr
+
+   16 midsr: ',' mids
+   17      | ';'
+
+   18 body: BEGIN statements ret END
+
+   19 statements: assign statements
+   20           | cond statements
+   21           | itr statements
+   22           | ipop statements
+   23           | /* empty */
+
+   24 assign: ID '=' INTEGER ';'
+   25       | ID '[' INTEGER ']' '=' INTEGER ';'
+
+   26 cond: IF logicalexpr THEN statements optional
+
+   27 optional: ELSE statements ENDIF ';'
+   28         | ENDIF ';'
+
+   29 itr: WHILE logicalexpr DO statements ENDWHILE ';'
+
+   30 ipop: READ '(' ID ')' ';'
+   31     | READ '(' array ')' ';'
+   32     | WRITE '(' arithmeticexpr ')' ';'
+
+   33 array: ID '[' array2 ']'
+
+   34 array2: array1
+
+   35 array1: INTEGER
+   36       | ID '[' array1 ']'
+
+   37 logicalexpr: arithmeticexpr LOGICALOPR arithmeticexpr
+
+   38 arithmeticexpr: arithmeticexpr MATHOPR arithmeticexpr
+   39               | ID
+   40               | ID '[' arithmeticexpr ']'
+   41               | INTEGER
+   42               | '(' arithmeticexpr ')'
+
+   43 ret: RETURN INTEGER ';'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 30 31 32 42
+')' (41) 30 31 32 42
+',' (44) 8 16
+';' (59) 9 17 24 25 27 28 29 30 31 32 43
+'=' (61) 24 25
+'[' (91) 7 25 33 36 40
+']' (93) 7 25 33 36 40
+'}' (125) 10
+error (256)
+INTMAIN (258) 10
+DECL (259) 2 11
+ENDDECL (260) 2 11
+RETURN (261) 43
+INTEGERE (262) 3 12
+BOOLEANE (263) 4 13
+ID (264) 6 7 15 24 25 30 33 36 39 40
+END (265) 18
+BEGIN (266) 18
+IF (267) 26
+ELSE (268) 27
+ENDIF (269) 27 28
+WHILE (270) 29
+DO (271) 29
+ENDWHILE (272) 29
+THEN (273) 26
+INTEGER (274) 7 24 25 35 41 43
+READ (275) 30 31
+WRITE (276) 32
+MATHOPR (277) 38
+LOGICALOPR (278) 37
+
+
+Nonterminals, with rules where they appear
+
+$accept (32)
+    on left: 0
+start (33)
+    on left: 1, on right: 0
+global (34)
+    on left: 2, on right: 1
+declstate (35)
+    on left: 3 4 5, on right: 2 3 4
+ids (36)
+    on left: 6 7, on right: 3 4 8
+idsr (37)
+    on left: 8 9, on right: 6 7
+main (38)
+    on left: 10, on right: 1
+maindecl (39)
+    on left: 11, on right: 10
+mainstate (40)
+    on left: 12 13 14, on right: 11 12 13
+mids (41)
+    on left: 15, on right: 12 13 16
+midsr (42)
+    on left: 16 17, on right: 15
+body (43)
+    on left: 18, on right: 10
+statements (44)
+    on left: 19 20 21 22 23, on right: 18 19 20 21 22 26 27 29
+assign (45)
+    on left: 24 25, on right: 19
+cond (46)
+    on left: 26, on right: 20
+optional (47)
+    on left: 27 28, on right: 26
+itr (48)
+    on left: 29, on right: 21
+ipop (49)
+    on left: 30 31 32, on right: 22
+array (50)
+    on left: 33, on right: 31
+array2 (51)
+    on left: 34, on right: 33
+array1 (52)
+    on left: 35 36, on right: 34 36
+logicalexpr (53)
+    on left: 37, on right: 26 29
+arithmeticexpr (54)
+    on left: 38 39 40 41 42, on right: 32 37 38 40 42
+ret (55)
+    on left: 43, on right: 18
+
+
+State 0
+
+    0 $accept: . start $end
+
+    DECL  shift, and go to state 1
+
+    start   go to state 2
+    global  go to state 3
+
+
+State 1
+
+    2 global: DECL . declstate ENDDECL
+
+    INTEGERE  shift, and go to state 4
+    BOOLEANE  shift, and go to state 5
+
+    $default  reduce using rule 5 (declstate)
+
+    declstate  go to state 6
+
+
+State 2
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 7
+
+
+State 3
+
+    1 start: global . main
+
+    INTMAIN  shift, and go to state 8
+
+    main  go to state 9
+
+
+State 4
+
+    3 declstate: INTEGERE . ids declstate
+
+    ID  shift, and go to state 10
+
+    ids  go to state 11
+
+
+State 5
+
+    4 declstate: BOOLEANE . ids declstate
+
+    ID  shift, and go to state 10
+
+    ids  go to state 12
+
+
+State 6
+
+    2 global: DECL declstate . ENDDECL
+
+    ENDDECL  shift, and go to state 13
+
+
+State 7
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+State 8
+
+   10 main: INTMAIN . maindecl body '}'
+
+    DECL  shift, and go to state 14
+
+    maindecl  go to state 15
+
+
+State 9
+
+    1 start: global main .
+
+    $default  reduce using rule 1 (start)
+
+
+State 10
+
+    6 ids: ID . idsr
+    7    | ID . '[' INTEGER ']' idsr
+
+    '['  shift, and go to state 16
+    ','  shift, and go to state 17
+    ';'  shift, and go to state 18
+
+    idsr  go to state 19
+
+
+State 11
+
+    3 declstate: INTEGERE ids . declstate
+
+    INTEGERE  shift, and go to state 4
+    BOOLEANE  shift, and go to state 5
+
+    $default  reduce using rule 5 (declstate)
+
+    declstate  go to state 20
+
+
+State 12
+
+    4 declstate: BOOLEANE ids . declstate
+
+    INTEGERE  shift, and go to state 4
+    BOOLEANE  shift, and go to state 5
+
+    $default  reduce using rule 5 (declstate)
+
+    declstate  go to state 21
+
+
+State 13
+
+    2 global: DECL declstate ENDDECL .
+
+    $default  reduce using rule 2 (global)
+
+
+State 14
+
+   11 maindecl: DECL . mainstate ENDDECL
+
+    INTEGERE  shift, and go to state 22
+    BOOLEANE  shift, and go to state 23
+
+    $default  reduce using rule 14 (mainstate)
+
+    mainstate  go to state 24
+
+
+State 15
+
+   10 main: INTMAIN maindecl . body '}'
+
+    BEGIN  shift, and go to state 25
+
+    body  go to state 26
+
+
+State 16
+
+    7 ids: ID '[' . INTEGER ']' idsr
+
+    INTEGER  shift, and go to state 27
+
+
+State 17
+
+    8 idsr: ',' . ids
+
+    ID  shift, and go to state 10
+
+    ids  go to state 28
+
+
+State 18
+
+    9 idsr: ';' .
+
+    $default  reduce using rule 9 (idsr)
+
+
+State 19
+
+    6 ids: ID idsr .
+
+    $default  reduce using rule 6 (ids)
+
+
+State 20
+
+    3 declstate: INTEGERE ids declstate .
+
+    $default  reduce using rule 3 (declstate)
+
+
+State 21
+
+    4 declstate: BOOLEANE ids declstate .
+
+    $default  reduce using rule 4 (declstate)
+
+
+State 22
+
+   12 mainstate: INTEGERE . mids mainstate
+
+    ID  shift, and go to state 29
+
+    mids  go to state 30
+
+
+State 23
+
+   13 mainstate: BOOLEANE . mids mainstate
+
+    ID  shift, and go to state 29
+
+    mids  go to state 31
+
+
+State 24
+
+   11 maindecl: DECL mainstate . ENDDECL
+
+    ENDDECL  shift, and go to state 32
+
+
+State 25
+
+   18 body: BEGIN . statements ret END
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 38
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 26
+
+   10 main: INTMAIN maindecl body . '}'
+
+    '}'  shift, and go to state 43
+
+
+State 27
+
+    7 ids: ID '[' INTEGER . ']' idsr
+
+    ']'  shift, and go to state 44
+
+
+State 28
+
+    8 idsr: ',' ids .
+
+    $default  reduce using rule 8 (idsr)
+
+
+State 29
+
+   15 mids: ID . midsr
+
+    ','  shift, and go to state 45
+    ';'  shift, and go to state 46
+
+    midsr  go to state 47
+
+
+State 30
+
+   12 mainstate: INTEGERE mids . mainstate
+
+    INTEGERE  shift, and go to state 22
+    BOOLEANE  shift, and go to state 23
+
+    $default  reduce using rule 14 (mainstate)
+
+    mainstate  go to state 48
+
+
+State 31
+
+   13 mainstate: BOOLEANE mids . mainstate
+
+    INTEGERE  shift, and go to state 22
+    BOOLEANE  shift, and go to state 23
+
+    $default  reduce using rule 14 (mainstate)
+
+    mainstate  go to state 49
+
+
+State 32
+
+   11 maindecl: DECL mainstate ENDDECL .
+
+    $default  reduce using rule 11 (maindecl)
+
+
+State 33
+
+   24 assign: ID . '=' INTEGER ';'
+   25       | ID . '[' INTEGER ']' '=' INTEGER ';'
+
+    '['  shift, and go to state 50
+    '='  shift, and go to state 51
+
+
+State 34
+
+   26 cond: IF . logicalexpr THEN statements optional
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    logicalexpr     go to state 55
+    arithmeticexpr  go to state 56
+
+
+State 35
+
+   29 itr: WHILE . logicalexpr DO statements ENDWHILE ';'
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    logicalexpr     go to state 57
+    arithmeticexpr  go to state 56
+
+
+State 36
+
+   30 ipop: READ . '(' ID ')' ';'
+   31     | READ . '(' array ')' ';'
+
+    '('  shift, and go to state 58
+
+
+State 37
+
+   32 ipop: WRITE . '(' arithmeticexpr ')' ';'
+
+    '('  shift, and go to state 59
+
+
+State 38
+
+   18 body: BEGIN statements . ret END
+
+    RETURN  shift, and go to state 60
+
+    ret  go to state 61
+
+
+State 39
+
+   19 statements: assign . statements
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 62
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 40
+
+   20 statements: cond . statements
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 63
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 41
+
+   21 statements: itr . statements
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 64
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 42
+
+   22 statements: ipop . statements
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 65
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 43
+
+   10 main: INTMAIN maindecl body '}' .
+
+    $default  reduce using rule 10 (main)
+
+
+State 44
+
+    7 ids: ID '[' INTEGER ']' . idsr
+
+    ','  shift, and go to state 17
+    ';'  shift, and go to state 18
+
+    idsr  go to state 66
+
+
+State 45
+
+   16 midsr: ',' . mids
+
+    ID  shift, and go to state 29
+
+    mids  go to state 67
+
+
+State 46
+
+   17 midsr: ';' .
+
+    $default  reduce using rule 17 (midsr)
+
+
+State 47
+
+   15 mids: ID midsr .
+
+    $default  reduce using rule 15 (mids)
+
+
+State 48
+
+   12 mainstate: INTEGERE mids mainstate .
+
+    $default  reduce using rule 12 (mainstate)
+
+
+State 49
+
+   13 mainstate: BOOLEANE mids mainstate .
+
+    $default  reduce using rule 13 (mainstate)
+
+
+State 50
+
+   25 assign: ID '[' . INTEGER ']' '=' INTEGER ';'
+
+    INTEGER  shift, and go to state 68
+
+
+State 51
+
+   24 assign: ID '=' . INTEGER ';'
+
+    INTEGER  shift, and go to state 69
+
+
+State 52
+
+   39 arithmeticexpr: ID .
+   40               | ID . '[' arithmeticexpr ']'
+
+    '['  shift, and go to state 70
+
+    $default  reduce using rule 39 (arithmeticexpr)
+
+
+State 53
+
+   41 arithmeticexpr: INTEGER .
+
+    $default  reduce using rule 41 (arithmeticexpr)
+
+
+State 54
+
+   42 arithmeticexpr: '(' . arithmeticexpr ')'
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    arithmeticexpr  go to state 71
+
+
+State 55
+
+   26 cond: IF logicalexpr . THEN statements optional
+
+    THEN  shift, and go to state 72
+
+
+State 56
+
+   37 logicalexpr: arithmeticexpr . LOGICALOPR arithmeticexpr
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+
+    MATHOPR     shift, and go to state 73
+    LOGICALOPR  shift, and go to state 74
+
+
+State 57
+
+   29 itr: WHILE logicalexpr . DO statements ENDWHILE ';'
+
+    DO  shift, and go to state 75
+
+
+State 58
+
+   30 ipop: READ '(' . ID ')' ';'
+   31     | READ '(' . array ')' ';'
+
+    ID  shift, and go to state 76
+
+    array  go to state 77
+
+
+State 59
+
+   32 ipop: WRITE '(' . arithmeticexpr ')' ';'
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    arithmeticexpr  go to state 78
+
+
+State 60
+
+   43 ret: RETURN . INTEGER ';'
+
+    INTEGER  shift, and go to state 79
+
+
+State 61
+
+   18 body: BEGIN statements ret . END
+
+    END  shift, and go to state 80
+
+
+State 62
+
+   19 statements: assign statements .
+
+    $default  reduce using rule 19 (statements)
+
+
+State 63
+
+   20 statements: cond statements .
+
+    $default  reduce using rule 20 (statements)
+
+
+State 64
+
+   21 statements: itr statements .
+
+    $default  reduce using rule 21 (statements)
+
+
+State 65
+
+   22 statements: ipop statements .
+
+    $default  reduce using rule 22 (statements)
+
+
+State 66
+
+    7 ids: ID '[' INTEGER ']' idsr .
+
+    $default  reduce using rule 7 (ids)
+
+
+State 67
+
+   16 midsr: ',' mids .
+
+    $default  reduce using rule 16 (midsr)
+
+
+State 68
+
+   25 assign: ID '[' INTEGER . ']' '=' INTEGER ';'
+
+    ']'  shift, and go to state 81
+
+
+State 69
+
+   24 assign: ID '=' INTEGER . ';'
+
+    ';'  shift, and go to state 82
+
+
+State 70
+
+   40 arithmeticexpr: ID '[' . arithmeticexpr ']'
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    arithmeticexpr  go to state 83
+
+
+State 71
+
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+   42               | '(' arithmeticexpr . ')'
+
+    MATHOPR  shift, and go to state 73
+    ')'      shift, and go to state 84
+
+
+State 72
+
+   26 cond: IF logicalexpr THEN . statements optional
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 85
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 73
+
+   38 arithmeticexpr: arithmeticexpr MATHOPR . arithmeticexpr
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    arithmeticexpr  go to state 86
+
+
+State 74
+
+   37 logicalexpr: arithmeticexpr LOGICALOPR . arithmeticexpr
+
+    ID       shift, and go to state 52
+    INTEGER  shift, and go to state 53
+    '('      shift, and go to state 54
+
+    arithmeticexpr  go to state 87
+
+
+State 75
+
+   29 itr: WHILE logicalexpr DO . statements ENDWHILE ';'
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 88
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 76
+
+   30 ipop: READ '(' ID . ')' ';'
+   33 array: ID . '[' array2 ']'
+
+    '['  shift, and go to state 89
+    ')'  shift, and go to state 90
+
+
+State 77
+
+   31 ipop: READ '(' array . ')' ';'
+
+    ')'  shift, and go to state 91
+
+
+State 78
+
+   32 ipop: WRITE '(' arithmeticexpr . ')' ';'
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+
+    MATHOPR  shift, and go to state 73
+    ')'      shift, and go to state 92
+
+
+State 79
+
+   43 ret: RETURN INTEGER . ';'
+
+    ';'  shift, and go to state 93
+
+
+State 80
+
+   18 body: BEGIN statements ret END .
+
+    $default  reduce using rule 18 (body)
+
+
+State 81
+
+   25 assign: ID '[' INTEGER ']' . '=' INTEGER ';'
+
+    '='  shift, and go to state 94
+
+
+State 82
+
+   24 assign: ID '=' INTEGER ';' .
+
+    $default  reduce using rule 24 (assign)
+
+
+State 83
+
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+   40               | ID '[' arithmeticexpr . ']'
+
+    MATHOPR  shift, and go to state 73
+    ']'      shift, and go to state 95
+
+
+State 84
+
+   42 arithmeticexpr: '(' arithmeticexpr ')' .
+
+    $default  reduce using rule 42 (arithmeticexpr)
+
+
+State 85
+
+   26 cond: IF logicalexpr THEN statements . optional
+
+    ELSE   shift, and go to state 96
+    ENDIF  shift, and go to state 97
+
+    optional  go to state 98
+
+
+State 86
+
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+   38               | arithmeticexpr MATHOPR arithmeticexpr .
+
+    MATHOPR  shift, and go to state 73
+
+    MATHOPR   [reduce using rule 38 (arithmeticexpr)]
+    $default  reduce using rule 38 (arithmeticexpr)
+
+
+State 87
+
+   37 logicalexpr: arithmeticexpr LOGICALOPR arithmeticexpr .
+   38 arithmeticexpr: arithmeticexpr . MATHOPR arithmeticexpr
+
+    MATHOPR  shift, and go to state 73
+
+    $default  reduce using rule 37 (logicalexpr)
+
+
+State 88
+
+   29 itr: WHILE logicalexpr DO statements . ENDWHILE ';'
+
+    ENDWHILE  shift, and go to state 99
+
+
+State 89
+
+   33 array: ID '[' . array2 ']'
+
+    ID       shift, and go to state 100
+    INTEGER  shift, and go to state 101
+
+    array2  go to state 102
+    array1  go to state 103
+
+
+State 90
+
+   30 ipop: READ '(' ID ')' . ';'
+
+    ';'  shift, and go to state 104
+
+
+State 91
+
+   31 ipop: READ '(' array ')' . ';'
+
+    ';'  shift, and go to state 105
+
+
+State 92
+
+   32 ipop: WRITE '(' arithmeticexpr ')' . ';'
+
+    ';'  shift, and go to state 106
+
+
+State 93
+
+   43 ret: RETURN INTEGER ';' .
+
+    $default  reduce using rule 43 (ret)
+
+
+State 94
+
+   25 assign: ID '[' INTEGER ']' '=' . INTEGER ';'
+
+    INTEGER  shift, and go to state 107
+
+
+State 95
+
+   40 arithmeticexpr: ID '[' arithmeticexpr ']' .
+
+    $default  reduce using rule 40 (arithmeticexpr)
+
+
+State 96
+
+   27 optional: ELSE . statements ENDIF ';'
+
+    ID     shift, and go to state 33
+    IF     shift, and go to state 34
+    WHILE  shift, and go to state 35
+    READ   shift, and go to state 36
+    WRITE  shift, and go to state 37
+
+    $default  reduce using rule 23 (statements)
+
+    statements  go to state 108
+    assign      go to state 39
+    cond        go to state 40
+    itr         go to state 41
+    ipop        go to state 42
+
+
+State 97
+
+   28 optional: ENDIF . ';'
+
+    ';'  shift, and go to state 109
+
+
+State 98
+
+   26 cond: IF logicalexpr THEN statements optional .
+
+    $default  reduce using rule 26 (cond)
+
+
+State 99
+
+   29 itr: WHILE logicalexpr DO statements ENDWHILE . ';'
+
+    ';'  shift, and go to state 110
+
+
+State 100
+
+   36 array1: ID . '[' array1 ']'
+
+    '['  shift, and go to state 111
+
+
+State 101
+
+   35 array1: INTEGER .
+
+    $default  reduce using rule 35 (array1)
+
+
+State 102
+
+   33 array: ID '[' array2 . ']'
+
+    ']'  shift, and go to state 112
+
+
+State 103
+
+   34 array2: array1 .
+
+    $default  reduce using rule 34 (array2)
+
+
+State 104
+
+   30 ipop: READ '(' ID ')' ';' .
+
+    $default  reduce using rule 30 (ipop)
+
+
+State 105
+
+   31 ipop: READ '(' array ')' ';' .
+
+    $default  reduce using rule 31 (ipop)
+
+
+State 106
+
+   32 ipop: WRITE '(' arithmeticexpr ')' ';' .
+
+    $default  reduce using rule 32 (ipop)
+
+
+State 107
+
+   25 assign: ID '[' INTEGER ']' '=' INTEGER . ';'
+
+    ';'  shift, and go to state 113
+
+
+State 108
+
+   27 optional: ELSE statements . ENDIF ';'
+
+    ENDIF  shift, and go to state 114
+
+
+State 109
+
+   28 optional: ENDIF ';' .
+
+    $default  reduce using rule 28 (optional)
+
+
+State 110
+
+   29 itr: WHILE logicalexpr DO statements ENDWHILE ';' .
+
+    $default  reduce using rule 29 (itr)
+
+
+State 111
+
+   36 array1: ID '[' . array1 ']'
+
+    ID       shift, and go to state 100
+    INTEGER  shift, and go to state 101
+
+    array1  go to state 115
+
+
+State 112
+
+   33 array: ID '[' array2 ']' .
+
+    $default  reduce using rule 33 (array)
+
+
+State 113
+
+   25 assign: ID '[' INTEGER ']' '=' INTEGER ';' .
+
+    $default  reduce using rule 25 (assign)
+
+
+State 114
+
+   27 optional: ELSE statements ENDIF . ';'
+
+    ';'  shift, and go to state 116
+
+
+State 115
+
+   36 array1: ID '[' array1 . ']'
+
+    ']'  shift, and go to state 117
+
+
+State 116
+
+   27 optional: ELSE statements ENDIF ';' .
+
+    $default  reduce using rule 27 (optional)
+
+
+State 117
+
+   36 array1: ID '[' array1 ']' .
+
+    $default  reduce using rule 36 (array1)

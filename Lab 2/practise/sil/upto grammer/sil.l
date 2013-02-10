@@ -25,8 +25,8 @@ logicalopr	>|<|==|!=|>=|<=
 "}" {return *yytext;}
 "=" {return *yytext;}
 {id}  {return ID;}
-"begin" {return BEG;}
-"end" {return END;} 
+"BEGIN" {return BEG;}
+"END" {return END;}
 "if" {return IF;}
 "ELSE" {return ELSE;}
 "then"    {return THEN;}
