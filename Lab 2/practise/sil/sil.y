@@ -14,7 +14,6 @@ start:  global main
 global: DECL declstate ENDDECL
       ;
 
-/* global declaration section */
 declstate:  decle declstate 
          |
          ;
@@ -28,11 +27,9 @@ ids:    ID  idsr
 idsr:   ',' ids
     |';'
     ;
-/* main section */
 main:   INTMAIN maindecl body '}'
     ;
 
-/*main declaration section */
 
 maindecl:   DECL mainstate ENDDECL
         ;
@@ -45,7 +42,6 @@ mids:   ID midsr
 midsr:  ',' mids
      |  ';'
      ;
-/*body of the main function */
 
 body:   BEGIN statements ret END
     ;
@@ -54,6 +50,7 @@ statements: assign statements
           | cond statements 
           | itr statements 
           | ipop statements 
+          |
           ;
 
 assign: ID '=' INTEGER ';' 
@@ -75,7 +72,6 @@ ipop:  READ'('ID')'';'
     |  WRITE'(' arithmeticexpr ')'';'
     ;
 
-/*array declaration */
 
 array:  ID'['array1']'
      ;
