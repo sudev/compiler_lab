@@ -1,11 +1,25 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 
 void yyerror(char *);
 
+
+struct node 
+  {
+  struct node *child;	//left guy 
+  struct node *next;	//next guy with pointer pointing to it 
+  const char *name; 	//name / type of the current struct 
+  };
+  
+#define YYSTYPE struct node *
+void printfunction(struct node *); //function printing the ast 
+struct node *create(const char *name, struct node *child, struct node *next); //funtion to create more nodes 
+
+
 %}
 
-%token INTMAIN DECL ENDDECL RETURN INTEGERE BOOLEANE ID END BEG IF ELSE  ENDIF WHILE DO ENDWHILE THEN INTEGER READ WRITE MATHOPR LOGICALOPR 
+%token INTMAIN DECL ENDDECL RETURN INTEGERE BOOLEANE ID ENDEE BEG IF ELSE  ENDIF WHILE DO ENDWHILE THEN INTEGER READ WRITE MATHOPR LOGICALOPR 
 
 %left OR
 %left AND
@@ -22,7 +36,7 @@ global: DECL declstate ENDDECL
       ;
 
 
-declstate:  INTEGERE ids declstate 
+declstate:  INTEGERE ids declstate 	
      | BOOLEANE ids declstate
      |
      ;
@@ -33,11 +47,10 @@ idsr:   ',' ids
     |';'
     ;
     
-main:   INTMAIN maindecl body '}'
+main:   INTMAIN maindecl body '}'			
     ;
 
-
-maindecl:   DECL mainstate ENDDECL
+maindecl:   DECL mainstate ENDDECL				
         ;
 mainstate:  INTEGERE mids mainstate
          |  BOOLEANE mids mainstate
@@ -49,7 +62,7 @@ midsr:  ',' mids
      |  ';'
      ;
 
-body:   BEG statements ret END
+body:   BEG statements ret ENDEE
     ;
 
 statements: assign statements 
@@ -107,4 +120,25 @@ int main()
 void yyerror(char *s)
 {
 	fprintf(stderr, "Error: %s\n", s);
+}
+void printfunction(struct node *pr)
+{
+  printf("(");
+  printf("%s", pr->name);
+  struct node *child = pr->child;					//asigns new struct for recursive loop
+  while(child)
+  {
+      printfunction(child);
+      child = child->next;
+   }
+   printf(")");
+}
+   
+struct node *create(const char *name, struct node *child,struct node *next)
+{
+  struct node *nextlevel = malloc(sizeof(struct node)); 		//memory allocation to new guy with type struct node
+  nextlevel->name = name;
+  nextlevel->next = next;
+  nextlevel->child = child;
+  return nextlevel; 							//returns the new node to guy 
 }

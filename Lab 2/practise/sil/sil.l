@@ -11,7 +11,7 @@ mathopr	[\-+\*\/\%]
 logicalopr	>|<|==|!=|>=|<=
 %%
 
-
+"end" {return ENDEE;} 
 "decl"  {return DECL;}
 "enddecl" {return ENDDECL;}
 "integer" {return INTEGERE;}
@@ -26,7 +26,7 @@ logicalopr	>|<|==|!=|>=|<=
 "=" {return *yytext;}
 {id}  {return ID;}
 "begin" {return BEG;}
-"end" {return END;} 
+
 "if" {return IF;}
 "ELSE" {return ELSE;}
 "then"    {return THEN;}
