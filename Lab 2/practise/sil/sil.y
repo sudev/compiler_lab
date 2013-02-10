@@ -14,11 +14,9 @@ start:  global main
 global: DECL declstate ENDDECL
       ;
 
-declstate:  decle  
-         |
-         ;
-decle:  INTEGERE ids decle 
-     | BOOLEANE ids decle
+
+declstate:  INTEGERE ids declstate 
+     | BOOLEANE ids declstate
      |
      ;
 ids:    ID  idsr 
