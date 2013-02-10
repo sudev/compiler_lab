@@ -4,7 +4,7 @@ int yylex(void);
 void yyerror(char *);
 %}
 
-%token DECL ENDDECL RETURN INTEGERE BOOLEANE INTMAIN ID END BEGIN IF ELSE  ENDIF WHILE DO ENDWHILE THEN INTEGER READ WRITE MATHOPR LOGICALOPR 
+%token INTMAIN DECL ENDDECL RETURN INTEGERE BOOLEANE ID END BEGIN IF ELSE  ENDIF WHILE DO ENDWHILE THEN INTEGER READ WRITE MATHOPR LOGICALOPR 
 
 %%
 
@@ -14,7 +14,7 @@ start:  global main
 global: DECL declstate ENDDECL
       ;
 
-declstate:  decle declstate 
+declstate:  decle  
          |
          ;
 decle:  INTEGERE ids decle 
@@ -27,6 +27,7 @@ ids:    ID  idsr
 idsr:   ',' ids
     |';'
     ;
+    
 main:   INTMAIN maindecl body '}'
     ;
 
@@ -73,9 +74,10 @@ ipop:  READ'('ID')'';'
     ;
 
 
-array:  ID'['array1']'
+array:  ID'['array2']'
      ;
-
+array2: array1
+      ;
 array1: INTEGER
       | ID'['array1']'
       ;

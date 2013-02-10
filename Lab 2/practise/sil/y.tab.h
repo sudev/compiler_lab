@@ -46,12 +46,12 @@ extern int yydebug;
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     DECL = 258,
-     ENDDECL = 259,
-     RETURN = 260,
-     INTEGERE = 261,
-     BOOLEANE = 262,
-     INTMAIN = 263,
+     INTMAIN = 258,
+     DECL = 259,
+     ENDDECL = 260,
+     RETURN = 261,
+     INTEGERE = 262,
+     BOOLEANE = 263,
      ID = 264,
      END = 265,
      BEGIN = 266,
@@ -70,12 +70,12 @@ extern int yydebug;
    };
 #endif
 /* Tokens.  */
-#define DECL 258
-#define ENDDECL 259
-#define RETURN 260
-#define INTEGERE 261
-#define BOOLEANE 262
-#define INTMAIN 263
+#define INTMAIN 258
+#define DECL 259
+#define ENDDECL 260
+#define RETURN 261
+#define INTEGERE 262
+#define BOOLEANE 263
 #define ID 264
 #define END 265
 #define BEGIN 266

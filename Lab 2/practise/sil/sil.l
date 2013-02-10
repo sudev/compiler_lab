@@ -1,14 +1,13 @@
-/* */
 %{
 #include <stdlib.h>
     void yyerror(char *);
 #include "y.tab.h"
-    %}
+%}
 
 int [0-9]+
 alphabet    [a-zA-z]
 id  {alphabet}[{alphabet}|{int}]*
-
+mathopr	[+-\*\/\%]
 %%
 
 
@@ -17,7 +16,6 @@ enddecl {return ENDDECL;}
 integer {return INTEGERE;}
 boolean {return BOOLEANE;}
 \;   {return *yytext;}
-\,  {return *yytext;}
 "["  {return *yytext;}
 "]"  {return *yytext;}
 int {return INTEGER;}
@@ -35,12 +33,17 @@ endif   {return ENDIF;}
 while   {return WHILE;}
 do  {return DO;}
 endwhile    {return ENDWHILE;}
- 
+then  {return THEN;}
+read    {return READ;}
+wirte    {return WRITE;}
+mathopr	{return MATHOPR;}
+logicalopr {return LOGICALOPR;}
+return	{return RETURN;}
+
 
 %%
-
 int yywrap(void) 
-            {
+{
         return 1;
-            }
+}
 
