@@ -81,7 +81,7 @@ cond:   IF logicalexpr THEN statements ENDIF ';' 		{ $$ = create("IF " ,$2,NULL)
     ;
 
 
-itr:    WHILE logicalexpr DO statements ENDWHILE ';'		{ $$ = create("While " ,$2,NULL); $2->next = $4;  }
+itr:    WHILE '(' logicalexpr ')' DO statements ENDWHILE ';'		{ $$ = create("While " ,$3,NULL); $3->next = $5;  }
    ;
 
 ipop:  READ'('ID')'';' 						{ $$ = create("Read " ,NULL,NULL);   }
