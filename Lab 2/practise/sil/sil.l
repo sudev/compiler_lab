@@ -38,6 +38,7 @@ logicalopr	>|<|==|!=|>=|<=
 "then"  {return THEN;}
 "read"    {return READ;}
 "wirte"    {return WRITE;}
+","	{return *yytext;}
 
 {mathopr}   {return MATHOPR;create("mathopr",NULL,NULL);}
 {logicalopr} {return LOGICALOPR; create("logicalopr",NULL,NULL);}
