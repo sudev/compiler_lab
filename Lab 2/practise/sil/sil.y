@@ -72,8 +72,8 @@ statements: assign statements 					{ $$ = $1;  $1->next=$2; }
           |							{ $$ = NULL;}
           ;
 
-assign: ID '=' INTEGER ';' 					{ $$ = create("Int assign" ,NULL,NULL);  }
-      | ID '[' INTEGER ']' '=' INTEGER ';'			{ $$ = create("Array " ,NULL,NULL); }
+assign: ID '=' arithmeticexpr';' 				{ $$ = create("Int assign" ,NULL,NULL); $1->next = $3;  }
+      | ID '[' arithmeticexpr ']' '=' arithmeticexpr ';'	{ $$ = create("Array " ,NULL,NULL); $1->next = $3; $3->next = $6; }
       ;
 
 cond:   IF logicalexpr THEN statements ENDIF ';' 		{ $$ = create("IF " ,$2,NULL);  $2->next=$4;}
@@ -98,7 +98,7 @@ array1: INTEGER
       | ID'['array1']'
       ;
 
-logicalexpr:    arithmeticexpr LOGICALOPR arithmeticexpr	{ $$ = create("logicalexpr " ,$1,NULL); $1->next =$3;  }
+logicalexpr:    arithmeticexpr LOGICALOPR arithmeticexpr	{ $$ = $2; $2->child=$1; $1->next =$3;  }
            ;
 
 arithmeticexpr: arithmeticexpr MATHOPR arithmeticexpr		{ $$ = $2; $2->child= $1; $1->next = $3;  }
