@@ -1,0 +1,20 @@
+decl
+
+integer n,y;
+
+enddecl
+
+
+integer main( ){ 
+
+decl
+integer x,z;
+boolean y;
+
+enddecl
+
+begin
+return x;
+end
+
+}
