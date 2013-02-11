@@ -1,0 +1,11 @@
+integer main(){
+decl 
+integer x;
+boolean y;
+enddecl                                                                                                                                                                                         
+begin 
+x=5;
+read(x);
+return 5;
+end
+}

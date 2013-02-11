@@ -20,13 +20,14 @@ logicalopr	>|<|==|!=|>=|<=
 "["  {return *yytext;}
 "]"  {return *yytext;}
 {int} {return INTEGER;}
-"integer main(){"   {return INTMAIN;}
+"main"	{return MAIN;}
 "{" {return *yytext;}
 "}" {return *yytext;}
 "=" {return *yytext;}
 {id}  {return ID;}
 "begin" {return BEG;}
-
+"(" 	{return *yytext;}
+")"	{return *yytext;}
 "if" {return IF;}
 "ELSE" {return ELSE;}
 "then"    {return THEN;}
@@ -37,8 +38,9 @@ logicalopr	>|<|==|!=|>=|<=
 "then"  {return THEN;}
 "read"    {return READ;}
 "wirte"    {return WRITE;}
-{mathopr}   {return MATHOPR;}
-{logicalopr} {return LOGICALOPR;}
+
+{mathopr}   {return MATHOPR;create("mathopr",NULL,NULL);}
+{logicalopr} {return LOGICALOPR; create("logicalopr",NULL,NULL);}
 return	{return RETURN;}
 [ \n\t]	;
 
