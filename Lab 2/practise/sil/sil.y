@@ -108,6 +108,8 @@ arithmeticexpr: arithmeticexpr MATHOPR arithmeticexpr		{ $$ = $2; $2->child= $1;
               | '(' arithmeticexpr ')'				{ $$ = $2;}
               ;
 ret:    RETURN INTEGER ';'					{ $$ = create("return  " ,NULL,NULL); }
+	|RETURN ID ';'						{ $$ = create("return  " ,NULL,NULL); }
+	|RETURN ID '['INTEGER']' ';'				{ $$ = create("return  " ,NULL,NULL); }	
 	;
 %%
 
