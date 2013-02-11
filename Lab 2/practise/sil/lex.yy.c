@@ -924,7 +924,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 27 "sil.l"
-{return ID;}
+{yylval = create("ID",NULL,NULL); return ID;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
@@ -999,12 +999,12 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 43 "sil.l"
-{return MATHOPR;create("mathopr",NULL,NULL);}
+{yylval = create("mathopr",NULL,NULL);return MATHOPR;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 44 "sil.l"
-{return LOGICALOPR; create("logicalopr",NULL,NULL);}
+{yylval = create("logicalopr",NULL,NULL);return LOGICALOPR;  }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP

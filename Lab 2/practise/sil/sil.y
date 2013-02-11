@@ -86,7 +86,7 @@ itr:    WHILE logicalexpr DO statements ENDWHILE ';'		{ $$ = create("While " ,$2
 
 ipop:  READ'('ID')'';' 						{ $$ = create("Read " ,NULL,NULL);   }
     |  READ'('array')'';'					{ $$ = create("Read " ,NULL,NULL); }
-    |  WRITE'(' arithmeticexpr ')'';'				{ $$ = create("write" ,$3,NULL);  }
+    |  WRITE'(' arithmeticexpr ')'';'				{ $$ = create("write " ,$3,NULL);  }
     ;
 
 

@@ -24,7 +24,7 @@ logicalopr	>|<|==|!=|>=|<=
 "{" {return *yytext;}
 "}" {return *yytext;}
 "=" {return *yytext;}
-{id}  {return ID;}
+{id}  {yylval = create("ID",NULL,NULL); return ID;}
 "begin" {return BEG;}
 "(" 	{return *yytext;}
 ")"	{return *yytext;}
@@ -40,8 +40,8 @@ logicalopr	>|<|==|!=|>=|<=
 "wirte"    {return WRITE;}
 ","	{return *yytext;}
 
-{mathopr}   {return MATHOPR;create("mathopr",NULL,NULL);}
-{logicalopr} {return LOGICALOPR; create("logicalopr",NULL,NULL);}
+{mathopr}   {yylval = create("mathopr",NULL,NULL);return MATHOPR;}
+{logicalopr} {yylval = create("logicalopr",NULL,NULL);return LOGICALOPR;  }
 return	{return RETURN;}
 [ \n\t]	;
 

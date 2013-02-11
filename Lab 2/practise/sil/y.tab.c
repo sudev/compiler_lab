@@ -1595,7 +1595,7 @@ yyreduce:
   case 33:
 /* Line 1792 of yacc.c  */
 #line 89 "sil.y"
-    { (yyval) = create("write" ,(yyvsp[(3) - (5)]),NULL);  }
+    { (yyval) = create("write " ,(yyvsp[(3) - (5)]),NULL);  }
     break;
 
   case 38:
