@@ -29,6 +29,7 @@ declstate:  INTEGERE ids declstate
 ids:    ID  idsr 
    |    ID '['INTEGER']' idsr
    ;
+   
 idsr:   ',' ids
     |';'
     ;
@@ -39,12 +40,15 @@ main:   INTMAIN maindecl body '}'
 
 maindecl:   DECL mainstate ENDDECL
         ;
+
 mainstate:  INTEGERE mids mainstate
          |  BOOLEANE mids mainstate
          |
          ;
+
 mids:   ID midsr
     ;
+
 midsr:  ',' mids
      |  ';'
      ;
@@ -66,6 +70,7 @@ assign: ID '=' INTEGER ';'
 cond:   IF logicalexpr THEN statements optional 
     ;
 
+
 optional:   ELSE statements ENDIF ';' 
         | ENDIF';'
         ;
@@ -81,8 +86,10 @@ ipop:  READ'('ID')'';'
 
 array:  ID'['array2']'
      ;
+
 array2: array1
       ;
+
 array1: INTEGER
       | ID'['array1']'
       ;
@@ -97,7 +104,9 @@ arithmeticexpr: arithmeticexpr MATHOPR arithmeticexpr
               | '(' arithmeticexpr ')'
               ;
 ret:    RETURN INTEGER ';'
+
 %%
+
 
 int main()
 {
