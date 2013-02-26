@@ -187,116 +187,102 @@ int yywrap(void)
    
 void yyerror(char *s)
 {
-	fprintf(stderr, "%s - line no : %d\n", s, yylineno);
-	errtotal++;
+fprintf(stderr, "%s - line no : %d\n", s, yylineno);
+errtotal++;
 }
 
 
 void Ginsert(char *name, int type,unsigned int size)
 {
-
-	if(gsame(name)>=0)
-	{
-		yyerror("Variable declared twice");
-		return;
-	}
-
-	struct GLOBAL * ptr=malloc(sizeof(struct GLOBAL));
-
-	ptr->name=name;
-	ptr->size=size;
+if(gsame(name)>=0)
+{
+yyerror("Variable declared more than once ");
+return;
+}
+struct GLOBAL * ptr=malloc(sizeof(struct GLOBAL));
+ptr->name=name;
+ptr->size=size;
 	if(size>1)
 	{
-		if(type==I)
-			ptr->type=IA;
-		else if(type==B)
-			ptr->type=BA;
-	}
-	else
-		ptr->type=type;
-
-	if(Gtop==NULL)
-		Gtop=ptr;
-	else
-	{
-		struct GLOBAL * temp = Gtop;
-		while(temp->next!=NULL)
-			temp=temp->next;
-		temp->next=ptr;
+if(type==I)
+ptr->type=IA;
+else if(type==B)
+ptr->type=BA;
+}
+else
+ptr->type=type;
+if(Gtop==NULL)
+Gtop=ptr;
+else
+{
+struct GLOBAL * temp = Gtop;
+while(temp->next!=NULL)
+temp=temp->next;
+temp->next=ptr;
 	}
 }
 
 
 void Linsert(char *name, int type)
 {
-
-	if(lsame(name)>=0)
-	{
-		yyerror("Duplicate variable");
-		return;
-	}
-	struct LOCAL *ptr=malloc(sizeof(struct LOCAL));
-
-	ptr->name=name;
-	ptr->type=type;
-
-	if(Ltop==NULL)
-		Ltop=ptr;
+if(lsame(name)>=0)
+{
+yyerror("Duplicate variable");
+return;
+}
+struct LOCAL *ptr=malloc(sizeof(struct LOCAL));
+ptr->name=name;
+ptr->type=type;
+if(Ltop==NULL)
+Ltop=ptr;
 	else
 	{
-		struct LOCAL * temp = Ltop;
-		while(temp->next!=NULL)
-			temp=temp->next;
-		temp->next=ptr;
-	}
+struct LOCAL * temp = Ltop;
+while(temp->next!=NULL)
+	temp=temp->next;
+	temp->next=ptr;
+}
 }
 
 
 int gettype(char *name)
 {
-	struct LOCAL * lptr = Ltop;
-	while(lptr!=NULL)
-		if(strcmp(lptr->name, name)==0)
-			return lptr->type; 
-		else
-			lptr=lptr->next;
-
+struct LOCAL * lptr = Ltop;
+while(lptr!=NULL)
+	if(strcmp(lptr->name, name)==0)
+	return lptr->type; 
+else
+	lptr=lptr->next;
 	struct GLOBAL *gptr=Gtop;
-
-	while(gptr!=NULL)
-		if(strcmp(gptr->name, name)==0)
-			return gptr->type; 
-		else
-			gptr=gptr->next;
-
-
-	yyerror("Undefined Variable");
-
-	return -1;
+while(gptr!=NULL)
+if(strcmp(gptr->name, name)==0)
+return gptr->type; 
+else
+gptr=gptr->next;
+yyerror("Undefined Variable");
+return -1;
 }
 
 int gsame(char * name)
 {
-	struct GLOBAL * ptr=Gtop;
-	while(ptr!=NULL)
-		if(strcmp(ptr->name, name)==0)
-			return 1;
-		else
-			ptr=ptr->next;
-
-	return -1;
+struct GLOBAL * ptr=Gtop;
+while(ptr!=NULL)
+if(strcmp(ptr->name, name)==0)
+return 1;
+else
+ptr=ptr->next;
+return -1;
 }
 
 int lsame(char * name)
 {
-	struct LOCAL * ptr=Ltop;
-	while(ptr!=NULL)
-		if(strcmp(ptr->name, name)==0)
-			return 1;
-		else
-			ptr=ptr->next;
-
-	return -1;
+struct LOCAL * ptr=Ltop;
+while(ptr!=NULL)
+if(strcmp(ptr->name, name)==0)
+return 1;
+else
+ptr=ptr->next;
+return -1;
 }
  
 
