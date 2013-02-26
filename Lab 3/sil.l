@@ -22,7 +22,7 @@ id 		[a-zA-Z_][{alphabet}|{int}|_]*
 mathopr 	[\-+\*\/\%]
 logopr		NOT|AND|OR
 extras		\;|\{|\}|\(|\)|\,|\[|\]|=
-relop		
+relop		>|<|==|>=|<=
 %%
 
 "end"		{return END;}
