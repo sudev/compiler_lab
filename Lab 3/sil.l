@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include "y.tab.h"
 
-#define EQ	0
-#define GE	2
-#define NE	3
-#define LT	4
-#define LE	1
-#define GT	5
 
 #define TRUE	1
 #define FALSE	0

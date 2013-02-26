@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+//definig types for each function 
 #define IA 2
 #define BA 3
 #define I 0
@@ -36,8 +37,8 @@ int yylex(void);
 void yyerror(char *);
 
 //insert functions for global and local variables
-void Ginsert(char *, int, unsigned int);
-void Linsert(char *, int);
+void globaladd(char *, int, unsigned int);
+void localadd(char *, int);
 
 
 int gsame(char *);
@@ -131,8 +132,8 @@ stmts:	stmts stmt
 body : BEG stmts RETURN INTEGER ';' END
      ;
 	
-lidls: lidls ',' ID	{Linsert($3, dectype);}
-      | ID	{Linsert($1, dectype);}
+lidls: lidls ',' ID	{localadd($3, dectype);}
+      | ID	{localadd($1, dectype);}
       ;
 
 ldeclw:	BOOLEANE {dectype=B;} lidls ';'
@@ -150,8 +151,8 @@ ldecl: DECL ldecls ENDDECL
 intmain	: INTEGERE MAIN '(' ')' '{' ldecl body '}'
 	;
 
-id:	ID '[' INTEGER ']' {Ginsert($1, dectype, $3);}
-	|ID {Ginsert($1, dectype, 1 );}
+id:	ID '[' INTEGER ']' {globaladd($1, dectype, $3);}
+	|ID {globaladd($1, dectype, 1 );}
 	;
 glist:glist id
       |id
@@ -192,7 +193,27 @@ errtotal++;
 }
 
 
-void Ginsert(char *name, int type,unsigned int size)
+int gettype(char *name)
+{
+struct LOCAL * lptr = Ltop;
+while(lptr!=NULL)
+	if(strcmp(lptr->name, name)==0)
+	return lptr->type; 
+else
+	lptr=lptr->next;
+	struct GLOBAL *gptr=Gtop;
+while(gptr!=NULL)
+if(strcmp(gptr->name, name)==0)
+return gptr->type; 
+else
+gptr=gptr->next;
+yyerror("Undefined Variable");
+return -1;
+}
+
+
+
+void globaladd(char *name, int type,unsigned int size)
 {
 if(gsame(name)>=0)
 {
@@ -223,7 +244,41 @@ temp->next=ptr;
 }
 
 
-void Linsert(char *name, int type)
+
+int lsame(char * name)
+{
+struct LOCAL * ptr=Ltop;
+while(ptr!=NULL)
+if(strcmp(ptr->name, name)==0)
+return 1;
+else
+ptr=ptr->next;
+return -1;
+}
+ 
+ 
+ 
+ 
+ 
+
+int gsame(char * name)
+{
+struct GLOBAL * ptr=Gtop;
+while(ptr!=NULL)
+if(strcmp(ptr->name, name)==0)
+return 1;
+else
+ptr=ptr->next;
+return -1;
+}
+
+
+
+
+
+
+
+void localadd(char *name, int type)
 {
 if(lsame(name)>=0)
 {
@@ -243,50 +298,4 @@ while(temp->next!=NULL)
 	temp->next=ptr;
 }
 }
-
-
-int gettype(char *name)
-{
-struct LOCAL * lptr = Ltop;
-while(lptr!=NULL)
-	if(strcmp(lptr->name, name)==0)
-	return lptr->type; 
-else
-	lptr=lptr->next;
-	struct GLOBAL *gptr=Gtop;
-while(gptr!=NULL)
-if(strcmp(gptr->name, name)==0)
-return gptr->type; 
-else
-gptr=gptr->next;
-yyerror("Undefined Variable");
-return -1;
-}
-
-int gsame(char * name)
-{
-struct GLOBAL * ptr=Gtop;
-while(ptr!=NULL)
-if(strcmp(ptr->name, name)==0)
-return 1;
-else
-ptr=ptr->next;
-return -1;
-}
-
-int lsame(char * name)
-{
-struct LOCAL * ptr=Ltop;
-while(ptr!=NULL)
-if(strcmp(ptr->name, name)==0)
-return 1;
-else
-ptr=ptr->next;
-return -1;
-}
- 
-
-
-
-
 
