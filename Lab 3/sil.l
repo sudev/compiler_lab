@@ -20,16 +20,16 @@ int 		[0-9]+
 alphabet 	[a-zA-Z]
 id 		[a-zA-Z_][{alphabet}|{int}|_]*
 matopr 		[\-+\*\/\%]
-logicopr	<|>|==|!=|>=|<=
+logicopr	NOT|AND|OR
 extras		\;|\{|\}|\(|\)|\,|\[|\]|=
 %%
 
-"end"		{return ENDE;}
+"end"		{return END;}
 "decl"		{return DECL;}
 "enddecl"	{return ENDDECL;}
 "integer"	{return INTEGERE;}
 "boolean"	{return BOOLEANE;}
-"main"		{return MAINE;}
+"main"		{return MAIN;}
 "begin"		{return BEG;}
 "else"		{return ELSE;}
 "if"		{return IF;}
@@ -58,7 +58,7 @@ extras		\;|\{|\}|\(|\)|\,|\[|\]|=
 		return INTEGER;
 		}
 
-{mathop}	{return *yytext;}
+{mathopr}	{return *yytext;}
 
 ==		{
 		yylval.relop=EQ;
@@ -85,14 +85,14 @@ extras		\;|\{|\}|\(|\)|\,|\[|\]|=
 		return RELOP;
 		}
 
-\>		{
+\>	{
 		yylval.relop=GT;
 		return RELOP;
 		}
 
 
 
-{logop}		{return *yytext;}
+{logopr}	{return *yytext;}
 
 {other}		{return *yytext;}
 
