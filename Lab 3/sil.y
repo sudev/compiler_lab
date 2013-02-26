@@ -53,15 +53,14 @@ int gettype(char *);
 %union
 {
 int ival;
-int relop;
 int type;
 char *str;
 }
 
-%token END DECL ENDDECL INTEGERE BOOLEANE AND OR NOT MAIN BEG ELSE IF THEN WHILE ENDIF RETURN DO READ WRITE ENDWHILE 
-%token <ival> NUM BNUM
+%token END DECL ENDDECL INTEGERE BOOLEANE AND OR NOT MAIN BEG ELSE IF THEN WHILE ENDIF RETURN DO READ WRITE ENDWHILE RELOP
+%token <ival> INTEGER BNUM
 %token <str> ID	
-%token <relop> RELOP
+
 
 
 %right RELOP
@@ -70,26 +69,23 @@ char *str;
 %left	'-' '+'
 %left	'/' '*' '%'
 
-%type <type> var expr
+%type <type> vari expr
 
 %%
-
-
-
-
-
-condi: IF expr THEN stmts ENDIF ';'	{if($2!=BOOL) yyerror("if bool");}
-      | IF expr THEN stmts ELSE stmts ENDIF ';'	{if($2!=BOOL) yyerror("if bool");}
+start:	gdecl intmain 
+     ;
+condi: IF expr THEN stmts ENDIF ';'	{if($2!=B) yyerror("if bool");}
+      | IF expr THEN stmts ELSE stmts ENDIF ';'	{if($2!=B) yyerror("if bool");}
       ;
 
-iter: WHILE expr DO stmts ENDWHILE ';'{if($2!=BOOL) yyerror("while boolean");}
+iter: WHILE expr DO stmts ENDWHILE ';'{if($2!=B) yyerror("while boolean");}
   ;
   
-op	: READ '(' var ')' ';'			{if($3!=I) yyerror("wroong type");}
+op	: READ '(' vari ')' ';'			{if($3!=I) yyerror("wroong type");}
 	| WRITE '(' expr ')' ';'		{if($3!=I) yyerror("wroong type");}
 	;
 
-expr	: var	{$$=$1;}
+expr	: vari	{$$=$1;}
 | expr '%' expr	{if(($1==I)&&($1==$3)) $$=$1; else yyerror("wrong type");}
 | expr AND expr	{if(($1==B)&&($1==$3)) $$=$1; else yyerror("wrong type");}
 | expr OR expr	{if(($1==B)&&($1==$3)) $$=$1; else yyerror("wrong type");}
@@ -132,38 +128,37 @@ stmt: assign
 stmts:	stmts stmt
     |
     ;
-body 	: BEG stmts RETURN INTEGER ';' END
-	;
+body : BEG stmts RETURN INTEGER ';' END
+     ;
 	
 lidls: lidls ',' ID	{Linsert($3, dectype);}
       | ID	{Linsert($1, dectype);}
       ;
 
-ldecl:	BOOLEANE {dectype=B;} lidls ';'
+ldeclw:	BOOLEANE {dectype=B;} lidls ';'
 	|INTEGERE {dectype=I;} lidls ';'
 	;
 
-ldecls : ldecls ldecl
-	| ldecl
+ldecls : ldecls ldeclw	
+	| ldeclw
 	;
 	
 ldecl: DECL ldecls ENDDECL
-	    |
-	    ;
+    |
+    ;
 
 intmain	: INTEGERE MAIN '(' ')' '{' ldecl body '}'
 	;
 
 id:	ID '[' INTEGER ']' {Ginsert($1, dectype, $3);}
-	|ID {Ginsert($1, dectype, 1);}
+	|ID {Ginsert($1, dectype, 1 );}
 	;
-glist:	glist, id
-      | id 
+glist:glist id
+      |id
       ;
 
 gdec: INTEGERE {dectype=I;} glist ';'
     | BOOLEANE {dectype=B;} glist ';'
-    |
     ;
     
 gdecs: gdecs gdec
@@ -174,8 +169,7 @@ gdecl:	DECL gdecs ENDDECL
       |
       ;
  
-start:	gdecl intmain 
-     ;
+
      
 
 %%
@@ -203,7 +197,7 @@ void Ginsert(char *name, int type,unsigned int size)
 
 	if(gsame(name)>=0)
 	{
-		yyerror("Duplicate variable");
+		yyerror("Variable declared twice");
 		return;
 	}
 
@@ -304,25 +298,6 @@ int lsame(char * name)
 
 	return -1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  
 
 

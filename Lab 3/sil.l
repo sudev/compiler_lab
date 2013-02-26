@@ -19,9 +19,10 @@ extern YYSTYPE yylval;
 int 		[0-9]+
 alphabet 	[a-zA-Z]
 id 		[a-zA-Z_][{alphabet}|{int}|_]*
-matopr 		[\-+\*\/\%]
-logicopr	NOT|AND|OR
+mathopr 	[\-+\*\/\%]
+logopr		NOT|AND|OR
 extras		\;|\{|\}|\(|\)|\,|\[|\]|=
+relop		
 %%
 
 "end"		{return END;}
@@ -59,42 +60,10 @@ extras		\;|\{|\}|\(|\)|\,|\[|\]|=
 		}
 
 {mathopr}	{return *yytext;}
-
-==		{
-		yylval.relop=EQ;
-		return RELOP;
-		}
-
-\>=		{
-		yylval.relop=GE;
-		return RELOP;
-		}
-
-\<=		{
-		yylval.relop=LE;
-		return RELOP;
-		}
-
-!=		{
-		yylval.relop=NE;
-		return RELOP;
-		}
-
-\<		{
-		yylval.relop=LT;
-		return RELOP;
-		}
-
-\>	{
-		yylval.relop=GT;
-		return RELOP;
-		}
-
-
-
+{relop}		{return RELOP;}
 {logopr}	{return *yytext;}
 
-{other}		{return *yytext;}
+{extras}		{return *yytext;}
 
 {id}		{
 		char *temp=malloc(yyleng*sizeof(char)+1);
@@ -103,10 +72,7 @@ extras		\;|\{|\}|\(|\)|\,|\[|\]|=
 		yylval.str=temp;
 		return ID;
 		}
-
-.		{yyerror("invalid character\n");}
+[ \t\n]		;
+[\n]		yylineno++;
+.		{yyerror("Character not valid \n");}
 %%
-int yywrap(void)
-{
-return 1;
-}
