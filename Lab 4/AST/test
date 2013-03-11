@@ -1,0 +1,9 @@
+integer main() {
+decl
+integer a;
+enddecl
+begin
+x=x+y;
+end
+return 0;
+}
