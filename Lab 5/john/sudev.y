@@ -65,7 +65,7 @@ var_def_stream:
                 | var_def
                 ;
 var_def:        IDENTIFIER  { st_top->type = decl_type }
-                | IDENTIFIER { st_top->type = new_arraytype(decl_tpye_base, (long) $3->extra.value); } 
+                | IDENTIFIER '[' I_LITERAL ']'   { st_top->type = new_arraytype(decl_tpye_base, (long) $3->extra.value); } 
                 ;
 function_head:  
                 DATATYPE IDENTIFIER '(' { 
@@ -95,15 +95,111 @@ function_head:
                         }
                     }
                     ;
-function_params:    typed_params_group_seq
+function_params:    params_stream_group
+                    |
+                    ;
+params_stream_group: params_stream ';'params_stream_group
+                    |params_stream
+                    |
+                    ;
+params_stream:      DATATYPE param_var_seq 
+                    ;
+param_var_seq:      param_var ',' param_var_seq
+                    | param_var
+                    ;
+param_var:          IDENTIFIER { } /* define the passing method here */
+                    |'&' IDENTIFIER  { } /* define the passing method for this */
+                    ;
+function_stream:    function_def function_stream
+                    |
+                    ;
+function_def:       function_head '{' decl_sec
+                    {
+                    
+                    }
+                    function_body '}'
+                    {
+                    
+                    }
+                    ;
+function_body:      BEG {  } stmt_block RETURN general_expr ';' END
+                    {
+                        
+                    }
+                    ;
+
+stmt_block:         state_stream { }
+                    ;
+
+state_stream:       statement state_stream { }
+                    | statement { }
+                    ;
+statement:          IF gen_expr THEN stmt_block ELSE stmt_block ENDIF ';' {}
+                    |IF gen_expr THEN stmt_block ENDIF ';' {}
+                    | WRITE '('gen_expr ')' ';' {}
+                    | WHILE gen_expr DO stmt_block ENDWHILE ';' {}
+                    | READ '(' var_rw ')' ';' {}
+                    | var_rw '=' gen_expr ';' {} 
+                    ;
+gen_expr:          gen_bra BIN_LOG_OP gen_expr
+                     {  
+                     }
+                    | NOT gen_expr
+                    {   }
+                    | gen_bra {} 
+                    ;
+gen_bra:            '(' gen_expr ')'
+                    | a_expr RELOP a_expr
+                    { }
+                    | a_expr
+                    ;
+a_expr:             a_bra ADDITIVE_OP a_expr
+                    { } 
+                    | a_bra { }
+                    ;
+a_bra:              '(' a_expr ')' { }
+                    | factor MULTIVE_OP a_bra
+                    { }
+                    | ADDITIVE_OP a_bra
+                    { }
+                    | factor { }
+                    ;
+factor:             
+                    var_rw
+                    | I_LITERAL {}
+                    | B_LITERAL {}
+                    | IDENTIFIER '(' argument_list ')' { }
+                    ;
+argument_list:      gen_expr arg_long { } 
+                    |
+                    ;
+arg_long:           ',' gen_expr arg_long { }
                     |
                     ;
 
+var_rw:             IDENTIFIER      { }
+                    | IDENTIFIER '[' a_expr ']'
+                     {  }
+                    ;
 
-           
+
 
 %%
 
+void yyerror(char *s){
+    fprintf(stderr, "Line Number : %d --- %s\n",line , s);
+    error_count++;
+}
+
+int main(void) { 
+    new_symbol(main);
+    st_top->top->type = new_functye(B_INT):
+    yyparse();
+    return (0)
+    };
+
+                
+}
 void globals_init()
 {
     globals_top = st_top;
