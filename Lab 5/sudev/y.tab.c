@@ -81,17 +81,18 @@ struct ptlist_n *ftype_param_cur = NULL;
 
 void globals_init();
 
-int is_int(ast_nt *);
-int is_bool(ast_nt *);
-int is_type(ast_nt *n, datatype_t *i_b_type);
-int is_op(int tag);
-int is_arith_op(int tag);
-int is_log_op(int tag);
+int check_type(ast_nt *n, datatype_t *i_b_type);
+int check_op(int tag);
+int check_arith_op(int tag);
+int check_log_op(int tag);
+
+int check_int(ast_nt *);
+int check_bool(ast_nt *);
 
 datatype_t *new_arraytype(base_e type, long size);
 
 datatype_t *new_functype(base_e rettype);
-void func_calc_size();
+void function_act_rec_size();
 void param_def_semantics(char passby);
 void ftype_addparam(datatype_t *func, datatype_t *ptype, char passby);
 
@@ -106,7 +107,7 @@ void sim_stmt(ast_nt *expr_n, int base_reg);
 
 
 /* Line 371 of yacc.c  */
-#line 110 "y.tab.c"
+#line 111 "y.tab.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -222,7 +223,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 226 "y.tab.c"
+#line 227 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -537,13 +538,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    51,    51,    51,    60,    60,    63,    64,    67,    68,
-      71,    72,    75,    76,    79,    79,   103,   104,   107,   108,
-     111,   114,   115,   118,   119,   122,   123,   127,   126,   143,
-     143,   151,   154,   155,   158,   159,   160,   161,   162,   163,
-     166,   174,   181,   184,   185,   193,   196,   204,   207,   208,
-     216,   223,   226,   227,   228,   229,   268,   269,   272,   273,
-     276,   277
+       0,    52,    52,    52,    61,    61,    64,    65,    68,    69,
+      72,    73,    76,    77,    80,    80,   104,   105,   108,   109,
+     112,   115,   116,   119,   120,   123,   124,   128,   127,   144,
+     144,   152,   155,   156,   159,   160,   161,   162,   163,   164,
+     167,   175,   182,   185,   186,   194,   197,   205,   208,   209,
+     217,   224,   227,   228,   229,   230,   269,   270,   273,   274,
+     277,   278
 };
 #endif
 
@@ -1521,13 +1522,13 @@ yyreduce:
     {
         case 2:
 /* Line 1792 of yacc.c  */
-#line 51 "sil.y"
+#line 52 "sil.y"
     { globals_init(); /*marks the end of the global variables */ st_calc_offsets(1); /*calculates the offset for the globals */ }
     break;
 
   case 3:
 /* Line 1792 of yacc.c  */
-#line 52 "sil.y"
+#line 53 "sil.y"
     {
 		  if (error_count == 0)
 			sim_start();
@@ -1538,31 +1539,31 @@ yyreduce:
 
   case 4:
 /* Line 1792 of yacc.c  */
-#line 60 "sil.y"
+#line 61 "sil.y"
     { sec = SEC_DECL; }
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 60 "sil.y"
+#line 61 "sil.y"
     { sec = SEC_NONE; /*sec == end of SEC_DECL */ }
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 75 "sil.y"
+#line 76 "sil.y"
     { symstk_top->type = decl_type; }
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 76 "sil.y"
+#line 77 "sil.y"
     { symstk_top->type = new_arraytype(decl_type->base, (long) (yyvsp[(3) - (4)])->extra.value); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 79 "sil.y"
+#line 80 "sil.y"
     {
 		  if (sec == SEC_DECL) {   //during function declaration
 			sec = SEC_FDECL;
@@ -1576,7 +1577,7 @@ yyreduce:
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 88 "sil.y"
+#line 89 "sil.y"
     {
 		  if (sec == SEC_DECL) { //f-definition
 			if (ftype_param_cur) {
@@ -1594,22 +1595,22 @@ yyreduce:
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 118 "sil.y"
+#line 119 "sil.y"
     { param_def_semantics('v'); /*  passby value   */ }
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 119 "sil.y"
+#line 120 "sil.y"
     { param_def_semantics('r'); /* passby refer  */}
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 127 "sil.y"
+#line 128 "sil.y"
     { 
 		  if (cur_func_def) {
-			func_calc_size(); /* activation record size calculation param + local variables + return( 1 ) */
+			function_act_rec_size(); /* activation record size calculation param + local variables + return( 1 ) */
 			st_calc_offsets(0);
 		  }
 		}
@@ -1617,7 +1618,7 @@ yyreduce:
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 134 "sil.y"
+#line 135 "sil.y"
     {
 		  if (error_count == 0)
 			sim_func((yyvsp[(5) - (6)]));
@@ -1629,13 +1630,13 @@ yyreduce:
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 143 "sil.y"
+#line 144 "sil.y"
     { sec = SEC_FBODY; }
     break;
 
   case 30:
 /* Line 1792 of yacc.c  */
-#line 144 "sil.y"
+#line 145 "sil.y"
     {
 		  sec = SEC_NONE;
 		  (yyval) = create_node(T_FBODY, (yyvsp[(3) - (7)]), NULL); /*function body node */
@@ -1645,185 +1646,185 @@ yyreduce:
 
   case 31:
 /* Line 1792 of yacc.c  */
-#line 151 "sil.y"
+#line 152 "sil.y"
     { (yyval) = create_node(T_ST_BLOCK, (yyvsp[(1) - (1)]), NULL); }
     break;
 
   case 32:
 /* Line 1792 of yacc.c  */
-#line 154 "sil.y"
+#line 155 "sil.y"
     { (yyval) = (yyvsp[(1) - (2)]); (yyvsp[(1) - (2)])->next = (yyvsp[(2) - (2)]); }
     break;
 
   case 33:
 /* Line 1792 of yacc.c  */
-#line 155 "sil.y"
+#line 156 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 34:
 /* Line 1792 of yacc.c  */
-#line 158 "sil.y"
-    { (yyval) = create_node(T_IF, (yyvsp[(2) - (6)]), NULL); (yyvsp[(2) - (6)])->next = (yyvsp[(4) - (6)]); if (!is_bool((yyvsp[(2) - (6)]))) yyerror("Bad if condition!"); }
+#line 159 "sil.y"
+    { (yyval) = create_node(T_IF, (yyvsp[(2) - (6)]), NULL); (yyvsp[(2) - (6)])->next = (yyvsp[(4) - (6)]); if (!check_bool((yyvsp[(2) - (6)]))) yyerror("Bad if condition!"); }
     break;
 
   case 35:
 /* Line 1792 of yacc.c  */
-#line 159 "sil.y"
-    { (yyval) = create_node(T_IF, (yyvsp[(2) - (8)]), NULL); (yyvsp[(2) - (8)])->next = (yyvsp[(4) - (8)]); (yyvsp[(4) - (8)])->next = (yyvsp[(6) - (8)]); if (!is_bool((yyvsp[(2) - (8)]))) yyerror("Bad if condition!"); }
+#line 160 "sil.y"
+    { (yyval) = create_node(T_IF, (yyvsp[(2) - (8)]), NULL); (yyvsp[(2) - (8)])->next = (yyvsp[(4) - (8)]); (yyvsp[(4) - (8)])->next = (yyvsp[(6) - (8)]); if (!check_bool((yyvsp[(2) - (8)]))) yyerror("Bad if condition!"); }
     break;
 
   case 36:
 /* Line 1792 of yacc.c  */
-#line 160 "sil.y"
-    { (yyval) = create_node(T_WHILE, (yyvsp[(2) - (6)]), NULL); (yyvsp[(2) - (6)])->next = (yyvsp[(4) - (6)]); if (!is_bool((yyvsp[(2) - (6)]))) yyerror("Bad while condition!"); }
+#line 161 "sil.y"
+    { (yyval) = create_node(T_WHILE, (yyvsp[(2) - (6)]), NULL); (yyvsp[(2) - (6)])->next = (yyvsp[(4) - (6)]); if (!check_bool((yyvsp[(2) - (6)]))) yyerror("Bad while condition!"); }
     break;
 
   case 37:
 /* Line 1792 of yacc.c  */
-#line 161 "sil.y"
+#line 162 "sil.y"
     { (yyval) = create_node(T_WRITE, (yyvsp[(3) - (5)]), NULL); }
     break;
 
   case 38:
 /* Line 1792 of yacc.c  */
-#line 162 "sil.y"
+#line 163 "sil.y"
     { (yyval) = create_node(T_READ, (yyvsp[(3) - (5)]), NULL); }
     break;
 
   case 39:
 /* Line 1792 of yacc.c  */
-#line 163 "sil.y"
-    { (yyval) = create_node('=', (yyvsp[(1) - (4)]), NULL); (yyvsp[(1) - (4)])->next = (yyvsp[(3) - (4)]); if (!((is_bool((yyvsp[(1) - (4)])) && is_bool((yyvsp[(3) - (4)]))) || (is_int((yyvsp[(1) - (4)])) && is_int((yyvsp[(3) - (4)]))))) yyerror("Assignment failed!"); }
+#line 164 "sil.y"
+    { (yyval) = create_node('=', (yyvsp[(1) - (4)]), NULL); (yyvsp[(1) - (4)])->next = (yyvsp[(3) - (4)]); if (!((check_bool((yyvsp[(1) - (4)])) && check_bool((yyvsp[(3) - (4)]))) || (check_int((yyvsp[(1) - (4)])) && check_int((yyvsp[(3) - (4)]))))) yyerror("Assignment failed!"); }
     break;
 
   case 40:
 /* Line 1792 of yacc.c  */
-#line 167 "sil.y"
+#line 168 "sil.y"
     {
 		  (yyval) = (yyvsp[(2) - (3)]);
 		  (yyval)->fchild = (yyvsp[(1) - (3)]);
 		  (yyvsp[(1) - (3)])->next = (yyvsp[(3) - (3)]);
-		  if (is_bool((yyvsp[(1) - (3)])) && is_bool((yyvsp[(3) - (3)])))
+		  if (check_bool((yyvsp[(1) - (3)])) && check_bool((yyvsp[(3) - (3)])))
 			(yyval)->extra.type = DT_BOOL;
 		}
     break;
 
   case 41:
 /* Line 1792 of yacc.c  */
-#line 175 "sil.y"
+#line 176 "sil.y"
     {
 		  (yyval) = (yyvsp[(1) - (2)]);
 		  (yyval)->fchild = (yyvsp[(2) - (2)]);
-		  if (is_bool((yyvsp[(2) - (2)])))
+		  if (check_bool((yyvsp[(2) - (2)])))
 			(yyval)->extra.type = DT_BOOL;
 		}
     break;
 
   case 42:
 /* Line 1792 of yacc.c  */
-#line 181 "sil.y"
+#line 182 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 43:
 /* Line 1792 of yacc.c  */
-#line 184 "sil.y"
+#line 185 "sil.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
     break;
 
   case 44:
 /* Line 1792 of yacc.c  */
-#line 186 "sil.y"
+#line 187 "sil.y"
     {
 		  (yyval) = (yyvsp[(2) - (3)]);
 		  (yyval)->fchild = (yyvsp[(1) - (3)]);
 		  (yyvsp[(1) - (3)])->next = (yyvsp[(3) - (3)]);
-		  if (is_int((yyvsp[(1) - (3)])) && is_int((yyvsp[(3) - (3)])))
+		  if (check_int((yyvsp[(1) - (3)])) && check_int((yyvsp[(3) - (3)])))
 			(yyval)->extra.type = DT_BOOL;
 		}
     break;
 
   case 45:
 /* Line 1792 of yacc.c  */
-#line 193 "sil.y"
+#line 194 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 46:
 /* Line 1792 of yacc.c  */
-#line 197 "sil.y"
+#line 198 "sil.y"
     {
 		  (yyval) = (yyvsp[(2) - (3)]);
 		  (yyval)->fchild = (yyvsp[(1) - (3)]);
 		  (yyvsp[(1) - (3)])->next = (yyvsp[(3) - (3)]);
-		  if (is_int((yyvsp[(1) - (3)])) && is_int((yyvsp[(3) - (3)])))
+		  if (check_int((yyvsp[(1) - (3)])) && check_int((yyvsp[(3) - (3)])))
 			(yyval)->extra.type = DT_INT;
 		}
     break;
 
   case 47:
 /* Line 1792 of yacc.c  */
-#line 204 "sil.y"
+#line 205 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 48:
 /* Line 1792 of yacc.c  */
-#line 207 "sil.y"
+#line 208 "sil.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
     break;
 
   case 49:
 /* Line 1792 of yacc.c  */
-#line 209 "sil.y"
+#line 210 "sil.y"
     {
 		  (yyval) = (yyvsp[(2) - (3)]);
 		  (yyval)->fchild = (yyvsp[(1) - (3)]);
 		  (yyvsp[(1) - (3)])->next = (yyvsp[(3) - (3)]);
-		  if (is_int((yyvsp[(1) - (3)])) && is_int((yyvsp[(3) - (3)])))
+		  if (check_int((yyvsp[(1) - (3)])) && check_int((yyvsp[(3) - (3)])))
 			(yyval)->extra.type = DT_INT;
 		}
     break;
 
   case 50:
 /* Line 1792 of yacc.c  */
-#line 217 "sil.y"
+#line 218 "sil.y"
     {
 		  (yyval) = (yyvsp[(1) - (2)]);
 		  (yyval)->fchild = (yyvsp[(2) - (2)]);
-		  if (is_int((yyvsp[(2) - (2)])))
+		  if (check_int((yyvsp[(2) - (2)])))
 			(yyval)->extra.type = DT_INT;
 		}
     break;
 
   case 51:
 /* Line 1792 of yacc.c  */
-#line 223 "sil.y"
+#line 224 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 52:
 /* Line 1792 of yacc.c  */
-#line 226 "sil.y"
+#line 227 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 53:
 /* Line 1792 of yacc.c  */
-#line 227 "sil.y"
+#line 228 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 54:
 /* Line 1792 of yacc.c  */
-#line 228 "sil.y"
+#line 229 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 55:
 /* Line 1792 of yacc.c  */
-#line 230 "sil.y"
+#line 231 "sil.y"
     {
 		  datatype_t *t = NULL;
 		  symstack_nt *sym = (yyvsp[(1) - (4)])->extra.st_entry;
@@ -1832,7 +1833,7 @@ yyreduce:
 			  ast_nt *args_looper = (yyvsp[(3) - (4)]);
 			  struct ptlist_n *para_looper = sym->type->ptlist;
 			  while (args_looper && para_looper) {
-				if (!is_type(args_looper, para_looper->type))
+				if (!check_type(args_looper, para_looper->type))
 				  break;
 				if (para_looper->passby == 'r' && args_looper->tag != T_ID) 
 				  break; //pass-by-reference => id must be passed
@@ -1843,7 +1844,7 @@ yyreduce:
 				if (args_looper)
 				  if (!para_looper)
 					yyerror("More number of arguments passed to the function than expected!");
-				  else if (is_op(args_looper->tag) || args_looper->tag == T_ID) {
+				  else if (check_op(args_looper->tag) || args_looper->tag == T_ID) {
 					if (args_looper->extra.other) //other => type or st_entry
 					  yyerror("Invalid type passed to the function!");
 				  } else
@@ -1864,37 +1865,37 @@ yyreduce:
 
   case 56:
 /* Line 1792 of yacc.c  */
-#line 268 "sil.y"
+#line 269 "sil.y"
     { (yyval) = (yyvsp[(1) - (2)]); (yyvsp[(1) - (2)])->next = (yyvsp[(2) - (2)]); }
     break;
 
   case 57:
 /* Line 1792 of yacc.c  */
-#line 269 "sil.y"
+#line 270 "sil.y"
     { (yyval) = 0; }
     break;
 
   case 58:
 /* Line 1792 of yacc.c  */
-#line 272 "sil.y"
+#line 273 "sil.y"
     { (yyval) = (yyvsp[(2) - (3)]); (yyvsp[(2) - (3)])->next = (yyvsp[(3) - (3)]); }
     break;
 
   case 59:
 /* Line 1792 of yacc.c  */
-#line 273 "sil.y"
+#line 274 "sil.y"
     { (yyval) = 0; }
     break;
 
   case 60:
 /* Line 1792 of yacc.c  */
-#line 276 "sil.y"
+#line 277 "sil.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 61:
 /* Line 1792 of yacc.c  */
-#line 278 "sil.y"
+#line 279 "sil.y"
     {
 		  datatype_t *t = NULL;
 		  struct symstack_n *sym = (yyvsp[(1) - (4)])->extra.st_entry;
@@ -1911,7 +1912,7 @@ yyreduce:
 
 
 /* Line 1792 of yacc.c  */
-#line 1915 "y.tab.c"
+#line 1916 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2143,7 +2144,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 291 "sil.y"
+#line 292 "sil.y"
 
 void yyerror(char *s) {
   fprintf(stderr, "*** Line %d: %s\n", line, s);
@@ -2263,12 +2264,13 @@ datatype_t *new_arraytype(base_e type, long size) {
 datatype_t *new_functype(base_e rettype) {
   datatype_t *newtype = malloc(sizeof(datatype_t));
   newtype->base = B_FUNC;
-  newtype->base2 = rettype;
   newtype->size = 0;
   newtype->ptlist = NULL;
+  newtype->base2 = rettype;
+ 
 }
 
-void func_calc_size() {
+void function_act_rec_size() {
   symstack_nt *localsym = symstk_top;
   int s = 0;
   while (localsym!=global_top) {
@@ -2313,28 +2315,28 @@ ast_nt *create_node(int tag, ast_nt *fchild, void *extra) {
   return newnode;
 }
 
-int is_type(ast_nt *n, datatype_t *i_b_type) {
+int check_type(ast_nt *n, datatype_t *i_b_type) {
   if (i_b_type == DT_INT)
-	return is_int(n);
+	return check_int(n);
   else if (i_b_type == DT_BOOL)
-	return is_bool(n);
+	return check_bool(n);
   else
 	return 0;
 }
 
-int is_int(ast_nt *n) {
+int check_int(ast_nt *n) {
   if (n->tag == T_INT_LIT)
 	return 1;
   if (n->tag == T_ID)
 	return (n->extra.st_entry && n->extra.st_entry->type == DT_INT);
   else if (n->tag == T_FCALL || n->tag == T_ARR_DREF)
 	return (n->extra.type == DT_INT);
-  else if (is_arith_op(n->tag))
+  else if (check_arith_op(n->tag))
 	return (n->extra.type ? 1 : 0);
   return 0;
 }
 
-int is_bool(ast_nt *n) {
+int check_bool(ast_nt *n) {
   if (n->tag == T_BOOL_LIT)
 	return 1;
   struct symstack_n *sym;
@@ -2342,16 +2344,16 @@ int is_bool(ast_nt *n) {
 	return  (n->extra.st_entry && n->extra.st_entry->type == DT_BOOL);
   else if (n->tag == T_FCALL || n->tag == T_ARR_DREF)
 	return (n->extra.type == DT_BOOL);
-  else if (is_log_op(n->tag))
+  else if (check_log_op(n->tag))
 	return (n->extra.type ? 1 : 0);
   return 0;
 }
 
-int is_op(int tag) {
-  return is_arith_op(tag) || is_log_op(tag);
+int check_op(int tag) {
+  return check_arith_op(tag) || check_log_op(tag);
 }
 
-int is_arith_op(int tag) {
+int check_arith_op(int tag) {
   switch (tag) {
 	case '+':
 	case '-':
@@ -2363,7 +2365,7 @@ int is_arith_op(int tag) {
   return 0;
 }
 
-int is_log_op(int tag) {
+int check_log_op(int tag) {
   switch (tag) {
 	case T_NOT:
 	case T_AND:
@@ -2435,7 +2437,7 @@ void sim_bin_op(ast_nt *astn1, ast_nt *astn2, int Ri, int Rj, char *op) {
   printf("POP R%d\n", Rj);
 }
 
-int sim_is_local(ast_nt *astn) {
+int sim_check_local(ast_nt *astn) {
   if (!astn) return 0;
   symstack_nt *cur = astn->extra.st_entry;
   while (cur->next) {
@@ -2449,7 +2451,7 @@ int sim_is_local(ast_nt *astn) {
 void sim_get_addr(ast_nt *astn, int Ri, int Rj) {
   if (!astn) return;
   if (astn->tag == T_ID) {
-	if (sim_is_local(astn)) {
+	if (sim_check_local(astn)) {
 	  printf("MOV R%d, BP\n", Ri);
 	  printf("PUSH R%d\n", Rj);
 	  printf("MOV R%d, %d\n", Rj, astn->extra.st_entry->offset);

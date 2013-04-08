@@ -1,0 +1,14 @@
+decl
+  integer n, x[10], i;
+enddecl
+
+integer main( ){
+decl
+enddecl
+begin
+	read (n);
+    write(n);
+    write(5);
+  return 1;   // Any integer value may be returned
+end
+}
