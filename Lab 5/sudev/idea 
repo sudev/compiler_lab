@@ -1,0 +1,5 @@
+save the current function parameters to some variable 
+
+find the actual location of the variable in the stack. ( use current param list ? ) save the same into some variable 
+
+

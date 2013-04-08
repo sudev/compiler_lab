@@ -14,27 +14,21 @@ struct symstack_n *symstk_top = NULL, *global_top, *cur_func_def = NULL;
 struct ptlist_n *ftype_param_cur = NULL;
 
 void globals_init();
-
 int check_type(ast_nt *n, datatype_t *i_b_type);
 int check_op(int tag);
 int check_arith_op(int tag);
 int check_log_op(int tag);
-
 int check_int(ast_nt *);
 int check_bool(ast_nt *);
-
 datatype_t *new_arraytype(base_e type, long size);
-
 datatype_t *new_functype(base_e rettype);
 void function_act_rec_size();
 void param_def_semantics(char passby);
 void ftype_addparam(datatype_t *func, datatype_t *ptype, char passby);
-
 datatype_t *get_base2_wrapped(datatype_t *type); 
 void free_datatype(datatype_t *type);
 void free_tree(ast_nt *);	/*deletes fucntion tree after use */
 void st_calc_offsets(int g); /*offset is calculated */
-
 void simcode_START(); /*reserves space for the stack globals items */
 void simcode_function(ast_nt *fbody); /*creates sim code for function */
 void sim_stmt(ast_nt *expr_n, int base_reg); /*does code generation for each statement recursively */
@@ -234,14 +228,17 @@ factor:
 		  if (sym && sym->type) /* check if its declared && datatype_t if NUll or not*/
 			if (sym->type->base == B_FUNC) {
 			  ast_nt *args_looper = $3;
+			  struct ptlist_n *lastboy = sym->type->ptlist; //lastboy will contain the the required variable to be changed during the call
 			  struct ptlist_n *para_looper = sym->type->ptlist;
 			  while (args_looper && para_looper) {
 				if (!check_type(args_looper, para_looper->type))
 				  break;
 				if (para_looper->passby == 'r' && args_looper->tag != T_ID) 
 				  break; //pass-by-reference => id must be passed
+				lastboy = args_looper;
 				args_looper = args_looper->next;
 				para_looper = para_looper->next;
+				
 			  }
 			  if (args_looper || para_looper) {
 				if (args_looper)
