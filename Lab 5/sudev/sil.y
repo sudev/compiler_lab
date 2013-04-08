@@ -30,14 +30,14 @@ void function_act_rec_size();
 void param_def_semantics(char passby);
 void ftype_addparam(datatype_t *func, datatype_t *ptype, char passby);
 
-datatype_t *get_base2_wrapped(datatype_t *type);
+datatype_t *get_base2_wrapped(datatype_t *type); 
 void free_datatype(datatype_t *type);
-void free_tree(ast_nt *);
-void st_calc_offsets(int g);
+void free_tree(ast_nt *);	/*deletes fucntion tree after use */
+void st_calc_offsets(int g); /*offset is calculated */
 
-void sim_start();
-void sim_func(ast_nt *fbody);
-void sim_stmt(ast_nt *expr_n, int base_reg);
+void simcode_START(); /*reserves space for the stack globals items */
+void simcode_function(ast_nt *fbody); /*creates sim code for function */
+void sim_stmt(ast_nt *expr_n, int base_reg); /*does code generation for each statement recursively */
 
 %}
 
@@ -52,7 +52,7 @@ program:
 		decl_sec { globals_init(); /*marks the end of the global variables */ st_calc_offsets(1); /*calculates the offset for the globals */ } function_def_coll
 		{
 		  if (error_count == 0)
-			sim_start();
+			simcode_START();
 		  else
 			fprintf(stderr, "--\nParsing completed with %d error(s)!\n", error_count);
 		}
@@ -134,7 +134,7 @@ function_def:
 		function_body '}'
 		{
 		  if (error_count == 0)
-			sim_func($5);
+			simcode_function($5);
 		  cur_func_def = NULL;
 		  free_tree($5);
 		  pop_locals();
@@ -543,7 +543,7 @@ void free_tree(ast_nt *n) {
   free(n);
 }
 
-void sim_start() {
+void simcode_START() {
   printf("START\n");
   symstack_nt *main_sym;
   int n;
@@ -565,7 +565,7 @@ void sim_start() {
   printf("error:\nMOV R0, -1\nOUT R0\nJMP die\n");
 }
 
-void sim_func(ast_nt *fbody) {
+void simcode_function(ast_nt *fbody) {
   if (fbody->tag == T_FBODY) {
 	printf("%s:\n", cur_func_def->id);
 	sim_stmt(fbody->fchild, 0); //T_ST_BLOCK; may modify R0
