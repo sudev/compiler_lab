@@ -48,7 +48,7 @@ void sim_stmt(ast_nt *expr_n, int base_reg);
 
 %%
 program:
-		decl_sec { globals_init(); st_calc_offsets(1); } function_def_coll
+		decl_sec { globals_init(); /*marks the end of the global variables */ st_calc_offsets(1); /*calculates the offset for the globals */ } function_def_coll
 		{
 		  if (error_count == 0)
 			sim_start();
@@ -57,7 +57,7 @@ program:
 		}
 		;
 decl_sec:
-		DECL { sec = SEC_DECL; } decl_stmt_coll ENDDECL					{ sec = SEC_NONE; }
+		DECL { sec = SEC_DECL; } decl_stmt_coll ENDDECL					{ sec = SEC_NONE; /*sec == end of SEC_DECL */ } 
 		;
 decl_stmt_coll:
 		decl_stmt decl_stmt_coll
@@ -72,14 +72,14 @@ var_def_seq:
 		| var_def
 		;
 var_def:
-		IDENTIFIER														{ symstk_top->type = decl_type; }
-		| IDENTIFIER '[' I_LITERAL ']'									{ symstk_top->type = new_arraytype(decl_type->base, (long) $3->extra.value); }
+		IDENTIFIER				{ symstk_top->type = decl_type; }
+		| IDENTIFIER '[' I_LITERAL ']'		{ symstk_top->type = new_arraytype(decl_type->base, (long) $3->extra.value); }
 		;
 function_head:
 		DATATYPE IDENTIFIER '(' {
-		  if (sec == SEC_DECL) { //during function declaration
+		  if (sec == SEC_DECL) {   //during function declaration
 			sec = SEC_FDECL;
-			symstk_top->type = new_functype(decl_type->base);
+			symstk_top->type = new_functype(decl_type->base);   
 		  } else { //during function definition
 			sec = SEC_DECL;
 			ftype_param_cur = (cur_func_def) ? cur_func_def->type->ptlist : NULL;
@@ -115,8 +115,8 @@ typed_group_param_seq:
 		| param_def
 		;
 param_def:
-		IDENTIFIER									{ param_def_semantics('v'); }
-		| '&' IDENTIFIER								{ param_def_semantics('r'); }
+		IDENTIFIER									{ param_def_semantics('v'); /*  passby value   */ }
+		| '&' IDENTIFIER								{ param_def_semantics('r'); /* passby refer  */}
 		;
 function_def_coll:
 		function_def function_def_coll
@@ -126,7 +126,7 @@ function_def:
 		function_head '{' decl_sec
 		{ 
 		  if (cur_func_def) {
-			func_calc_size();
+			func_calc_size(); /* activation record size calculation param + local variables + return( 1 ) */
 			st_calc_offsets(0);
 		  }
 		}
@@ -143,16 +143,16 @@ function_body:
 		BEG { sec = SEC_FBODY; } stmt_block RETURN general_expr ';' END
 		{
 		  sec = SEC_NONE;
-		  $$ = create_node(T_FBODY, $3, NULL);
-		  $3->next = create_node(T_FRET, $5, NULL);
+		  $$ = create_node(T_FBODY, $3, NULL); /*function body node */
+		  $3->next = create_node(T_FRET, $5, NULL); /*function return node */
 		}
 		;
 stmt_block:
-		general_stmt_seq								{ $$ = create_node(T_ST_BLOCK, $1, NULL); }
+		general_stmt_seq						{ $$ = create_node(T_ST_BLOCK, $1, NULL); }
 		;
 general_stmt_seq:
-		general_stmt general_stmt_seq							{ $$ = $1; $1->next = $2; }
-		| general_stmt									{ $$ = $1; }
+		general_stmt general_stmt_seq					{ $$ = $1; $1->next = $2; }
+		| general_stmt							{ $$ = $1; }
 		;
 general_stmt:
 		IF general_expr THEN stmt_block ENDIF ';' 				{ $$ = create_node(T_IF, $2, NULL); $2->next = $4; if (!is_bool($2)) yyerror("Bad if condition!"); }
@@ -230,14 +230,14 @@ factor:
 		{
 		  datatype_t *t = NULL;
 		  symstack_nt *sym = $1->extra.st_entry;
-		  if (sym && sym->type)
+		  if (sym && sym->type) /* check if its declared && datatype_t if NUll or not*/
 			if (sym->type->base == B_FUNC) {
 			  ast_nt *args_looper = $3;
 			  struct ptlist_n *para_looper = sym->type->ptlist;
 			  while (args_looper && para_looper) {
 				if (!is_type(args_looper, para_looper->type))
 				  break;
-				if (para_looper->passby == 'r' && args_looper->tag != T_ID)
+				if (para_looper->passby == 'r' && args_looper->tag != T_ID) 
 				  break; //pass-by-reference => id must be passed
 				args_looper = args_looper->next;
 				para_looper = para_looper->next;
@@ -265,7 +265,7 @@ factor:
 		}
 		;
 argument_list:
-		general_expr arg_list_long						{ $$ = $1; $1->next = $2; }
+		general_expr arg_list_long			{ $$ = $1; $1->next = $2; }
 		|									{ $$ = 0; }
 		;
 arg_list_long:
@@ -280,7 +280,7 @@ variable_rw:
 		  struct symstack_n *sym = $1->extra.st_entry;
 		  if (sym && sym->type)
 			if (sym->type->base == B_ARRAY)
-			  t = get_base2_wrapped(sym->type);
+			  t = get_base2_wrapped(sym->type); /*returns oolan types DT_INT and DT_BOOL*/
 			else {
 			  sprintf(error_buffer, "'%s' is not an array...", sym->id);
 			  yyerror(error_buffer);
@@ -303,7 +303,7 @@ int main(void) {
 
 void param_def_semantics(char passby) {
   if (sec == SEC_FDECL)
-	ftype_addparam(symstk_top->type, param_type, passby);
+	ftype_addparam(symstk_top->type, param_type, passby); /* adds the type information into the ptlist */
   else { //Function definition
 	int err = 0;
 	symstk_top->type = decl_type;
@@ -346,10 +346,10 @@ struct symstack_n *lookup_sym(char *id) {
 }
 
 void globals_init() {
-  global_top = symstk_top;
+  global_top = symstk_top; /*marks the top for the global variables */
   globals_size = 0;
   symstack_nt *cur = symstk_top;
-  while (cur) {
+  while (cur) { /*used during runtime: globals_size  */
   	if (cur->type->base != B_FUNC) {
 	  if (cur->type->base == B_ARRAY)
 		globals_size += cur->type->size;
@@ -663,13 +663,13 @@ void sim_stmt(ast_nt *expr_n, int base_reg) {
 	  break;
 	case T_FCALL:
 	  //(expr_n->fchild->next) has tag (T_FARGS)
-	  astn1 = expr_n->fchild->next->fchild; //fchild of T_FARGS ( first argument to the function )
-	  astn2 = expr_n->fchild; //T_ID of type function ( Identifier of the function )
-	  n = astn2->extra.st_entry->type->size;  // size of the activation record of function 
+	  astn1 = expr_n->fchild->next->fchild; //fchild of T_FARGS
+	  astn2 = expr_n->fchild; //T_ID of type function
+	  n = astn2->extra.st_entry->type->size;
 
 	  printf("MOV R%d, 0\n", Ri);
-	  printf("PUSH R%d\n", Ri); //activation record space starts here and allocates space for return 
-	  printf("MOV R%d, SP\n", Ri); //now we have the return value address in Ri / activation start mark too 
+	  printf("PUSH R%d\n", Ri); //activation record starts here: first word reserved for storing return value
+	  printf("MOV R%d, SP\n", Ri); //Ri will contain the start point of activation record
 	  int i;
 	  for (i=1; i<n; i++) {
 		if (astn1) {
