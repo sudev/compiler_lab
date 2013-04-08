@@ -1,3 +1,89 @@
+_____----------------------------------- lex 
+
+%{
+#include "commons.h"
+#include "y.tab.h"
+extern int line, sec;
+extern datatype_t *decl_type, *param_type;
+extern datatype_t *DT_INT, *DT_BOOL;
+extern struct symstack_n *cur_func_def;
+%}
+
+UDEF_TOK	[a-zA-Z][a-zA-Z0-9_]*
+
+%%
+
+"//".*		;
+decl		{ return DECL; }
+enddecl		{ return ENDDECL; }
+begin		{ return BEG; }
+end			{ return END; }
+return		{ return RETURN; }
+read		{ return READ; }
+write		{ return WRITE; }
+if			{ return IF; }
+then		{ return THEN; }
+else		{ return ELSE; }
+endif		{ return ENDIF; }
+while		{ return WHILE; }
+do			{ return DO; }
+endwhile	{ return ENDWHILE; }
+boolean		{ if (sec == SEC_FDECL) param_type = DT_BOOL; else decl_type = DT_BOOL; return DATATYPE; }
+integer		{ if (sec == SEC_FDECL) param_type = DT_INT; else decl_type = DT_INT; return DATATYPE; }
+NOT			{ yylval = create_node(T_NOT, 0, 0); return NOT; }
+AND			{ yylval = create_node(T_AND, 0, 0); return BIN_LOG_OP; }
+OR			{ yylval = create_node(T_OR, 0, 0); return BIN_LOG_OP; }
+"=="		{ yylval = create_node(T_REL_E, 0, 0); return REL_OP; }
+">="		{ yylval = create_node(T_REL_GE, 0, 0); return REL_OP; }
+"<="		{ yylval = create_node(T_REL_LE, 0, 0); return REL_OP; }
+"!="		{ yylval = create_node(T_REL_NE, 0, 0); return REL_OP; }
+">"			{ yylval = create_node('>', 0, 0); return REL_OP; }
+"<"			{ yylval = create_node('<', 0, 0); return REL_OP; }
+"+"			{ yylval = create_node('+', 0, 0); return ADDITIVE_OP; }
+"-"			{ yylval = create_node('-', 0, 0); return ADDITIVE_OP; }
+"*"			{ yylval = create_node('*', 0, 0); return MULTIVE_OP; }
+"/"			{ yylval = create_node('/', 0, 0); return MULTIVE_OP; }
+"%"			{ yylval = create_node('%', 0, 0); return MULTIVE_OP; }
+[&,=;(){}]	{ return *yytext; }
+"["			{ return '['; }
+"]"			{ return ']'; }
+TRUE		{
+			  yylval = create_node(T_BOOL_LIT, NULL, (void*) 1);
+			  return B_LITERAL;
+			}
+FALSE		{
+			  yylval = create_node(T_BOOL_LIT, NULL, (void*) 0);
+			  return B_LITERAL;
+			}
+{UDEF_TOK}	{
+			  if (sec == SEC_DECL) {
+				new_symbol(yytext); //add symbol to stack (top, ofcourse!)
+			  } else if (sec == SEC_FDECL) { 
+				//Skip - things are done in yacc
+			  } else if (sec == SEC_FBODY) {
+				yylval = create_node(T_ID, NULL, lookup_sym(yytext));
+				if (yylval->extra.st_entry == NULL)
+				  yyerror("Invalid identifier!");
+			  } else { //Function definition
+				cur_func_def = lookup_sym(yytext);
+				if (cur_func_def == NULL)
+				  yyerror("No such function is declared!");
+			  }
+			  return IDENTIFIER;
+			}
+[0-9]+		{
+			  yylval = create_node(T_INT_LIT, NULL, (void*) atol(yytext));
+			  return I_LITERAL;
+			}
+[ \t]		;
+\n			line++;
+.			yyerror("Ignoring an invalid character!");
+%%
+int yywrap() { return 1; }
+
+
+________-------------------- lex 
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -773,3 +859,72 @@ void sim_stmt(ast_nt *expr_n, int base_reg) {
 	  break;
   }
 }
+
+---------------------------- commons 
+
+
+void yyerror(char *);
+#define SEC_NONE 0
+#define SEC_DECL 1
+#define SEC_FDECL 2
+#define SEC_FBODY 3
+
+typedef struct datatype datatype_t;
+
+struct symstack_n {
+  char id[32];
+  datatype_t *type;
+  int offset; //for variables
+  struct symstack_n *next;
+};
+
+typedef struct symstack_n symstack_nt;
+
+void new_symbol(char *id);
+symstack_nt *lookup_sym(char *id);
+void pop_locals();
+
+struct ptlist_n {
+  datatype_t * type; //DT_INT or DT_BOOL
+  char passby; //'v': value, 'r': reference
+  struct ptlist_n *next;
+};
+
+typedef enum { B_INT=1, B_BOOL, B_ARRAY, B_FUNC } base_e;
+
+struct datatype {
+  base_e base; //int, bool, array, func
+  base_e base2; //int, bool; when base=(array: obvious, func: return type)
+  int size; //for array size; for function, size of activation record
+  struct ptlist_n * ptlist; //for func: type of parameters
+};
+
+typedef enum { T_IF=256, T_WHILE, T_WRITE, T_READ, T_ST_BLOCK, T_FBODY,
+			   T_FRET, T_FCALL, T_FARGS, T_ARR_DREF, T_ID, T_BOOL_LIT, T_INT_LIT, 
+			   T_NOT, T_AND, T_OR, T_REL_E, T_REL_NE, T_REL_LE, T_REL_GE } tag_e;
+
+struct ast_n {
+  int tag;
+  struct ast_n *next;
+  struct ast_n *fchild;
+  union {
+	symstack_nt *st_entry; //symbol table entry
+	long value;
+	datatype_t *type;
+	void *other;
+  } extra;
+  /** extra will store:
+   * when title is
+   * 	ID  	: symstack_n pointer value
+   * 	BOOL_LIT: corresponding value (0 or 1)
+   * 	INT_LIT	: corresponding value (integer)
+   * 	<op>	: corresponding DT_INT or DT_BOOL
+   * 	<other>	: "void" or "error"?
+   */
+};
+
+typedef struct ast_n ast_nt;
+
+#define YYSTYPE ast_nt *
+
+ast_nt *create_node(int tag, ast_nt *fchild, void *extra);
